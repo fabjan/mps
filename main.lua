@@ -29,12 +29,13 @@ RobotInputMap = {}
 -- Sprite collections
 Players = {}
 Falling = {}
+Fallers = {}
 
 -- Static things
 Platforms = {
-  {x=0,y=10, w=PIXEL_WIDTH, h=10},
-  {x=0,y=100, w=PIXEL_WIDTH/2, h=10},
-  {x=PIXEL_WIDTH*0.75,y=70, w=PIXEL_WIDTH/5, h=10}
+  {x=0,y=20, w=PIXEL_WIDTH, h=20},
+  {x=0,y=100, w=PIXEL_WIDTH/2, h=20},
+  {x=PIXEL_WIDTH*0.75,y=70, w=PIXEL_WIDTH/5, h=20}
 }
 
 function love.load()
@@ -51,6 +52,7 @@ function love.load()
     sprites.create("robot", "player")
     sprites.mutate("robot", {x = lume.random(0, PIXEL_WIDTH)})
     lume.push(Falling, "robot")
+    lume.push(Fallers, "robot")
   end
   
   LowrezCanvas = love.graphics.newCanvas()
@@ -69,6 +71,7 @@ function love.update(dt)
       sprites.mutate(playerName, {x = lume.random(0, PIXEL_WIDTH)})
       lume.push(Players, playerName)
       lume.push(Falling, playerName)
+      lume.push(Fallers, playerName)
       console.log("player "..playerNo.." spawned!")
     end
     actOnInput(playerName, inputState)
@@ -97,15 +100,27 @@ end
 
 function resolvePlatforming()
   -- well, this will be fast?
-  for i, spriteName in ipairs(Falling) do
+  for i, spriteName in ipairs(Fallers) do
+    local isFalling = lume.find(Falling, spriteName)
     local feet = sprites.getFeet(spriteName)
     local dy = sprites.get(spriteName, "dy")
-    if feet then
+    if feet and isFalling then
       for i, platform in ipairs(Platforms) do
         if isCollision(feet, platform) and dy < 0 then
           land(spriteName)
           sprites.mutate(spriteName, {y = platform.y})
         end
+      end
+    elseif feet and not isFalling then
+      local isOnSolidGround = false
+      feet.y = feet.y + 1
+      for i, platform in ipairs(Platforms) do
+        if isCollision(feet, platform) then
+          isOnSolidGround = true
+        end
+      end
+      if not isOnSolidGround then
+        lume.push(Falling, spriteName)
       end
     end
   end
