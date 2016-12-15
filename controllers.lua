@@ -15,12 +15,14 @@ local ControllerState = {}
 local ControllerStateTransitions = {
 	off = {
 		["true"] = "pressed",
+    ["false"] = "off"
 	},
 	pressed = {
 		["true"] = "held",
 		["false"] = "released"
 	},
 	held = {
+    ["true"] = "held",
 		["false"] = "released"
 	},
 	released = {
