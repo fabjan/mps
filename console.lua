@@ -11,6 +11,10 @@ function console.toggle()
   ShowConsole = not ShowConsole
 end
 
+function console.showing()
+  return ShowConsole
+end
+
 function console.log(...)
 	local lines = {...}
 	local line  = ""
@@ -30,7 +34,7 @@ function console.draw()
 
 	love.graphics.setColor(20, 20, 20, 200)
 	love.graphics.rectangle("fill",	CONSOLE_MARGIN, 0, width, lines*LINE_HEIGHT)
-  love.graphics.setColor(  0, 255,   0, 200)
+  love.graphics.setColor(255, 255, 255, 200)
 	for i, line in ipairs(ConsoleBuffer) do
 		love.graphics.print(line, CONSOLE_MARGIN*2, (i - 1)*LINE_HEIGHT)
 	end
