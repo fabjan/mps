@@ -93,6 +93,7 @@ function love.update(dt)
   
   sprites.update(dt)
   resolvePlatforming()
+  resolvePlayerCollisions()
   clampToScreen()
 
   sounds.update(dt)
@@ -121,6 +122,20 @@ function resolvePlatforming()
       end
       if not isOnSolidGround then
         lume.push(Falling, spriteName)
+      end
+    end
+  end
+end
+
+function resolvePlayerCollisions()
+  for i, playerA in ipairs(Players) do
+    for j, playerB in ipairs(Players) do
+      if not (playerA == playerB) then
+        local rectA = sprites.getRect(playerA)
+        local rectB = sprites.getRect(playerB)
+        if isCollision(rectA, rectB) then
+          playRandom("Explosion")
+        end
       end
     end
   end
@@ -155,6 +170,7 @@ function clampToScreen()
 end
 
 function land(spriteName)
+  playRandom("Hit")
   sprites.mutate(spriteName, {dy = 0, ddy = 0})
   lume.remove(Falling, spriteName)
 end
@@ -162,10 +178,7 @@ end
 function actOnInput(spriteName, inputState)
   local isFalling = lume.find(Falling, spriteName)
   if inputState.jump == "pressed" and not isFalling then
-    local sfx = sfxr.newSound()
-    sfx:randomJump()
-    local soundData = sfx:generateSoundData()
-    love.audio.newSource(soundData):play()
+    playRandom("Jump")
     
     sprites.mutate(spriteName, {dy = 10})
     lume.push(Falling, spriteName)
@@ -193,10 +206,7 @@ function actOnInput(spriteName, inputState)
     end
   end
   if inputState.duck == "pressed" then
-    local sfx = sfxr.newSound()
-    sfx:randomExplosion()
-    local soundData = sfx:generateSoundData()
-    love.audio.newSource(soundData):play()
+    console.log(spriteName.." ducks!")
   end
 end
 
@@ -216,14 +226,18 @@ function love.keypressed(key)
     n = "Explosion",
     m = "Pickup"
   }
-  for k,fun in pairs(soundMap) do
+  for k, soundType in pairs(soundMap) do
     if key == k then
-      local sfx = sfxr.newSound()
-      sfx["random"..fun](sfx)
-      local soundData = sfx:generateSoundData()
-      love.audio.newSource(soundData):play()
+      playRandom(soundType)
     end
   end
+end
+
+function playRandom(soundType)
+  local sfx = sfxr.newSound()
+  sfx["random"..soundType](sfx)
+  local soundData = sfx:generateSoundData()
+  love.audio.newSource(soundData):play()
 end
 
 function robotDoSomething()
