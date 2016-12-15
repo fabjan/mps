@@ -92,32 +92,37 @@ function love.update(dt)
 end
 
 function actOnInput(spriteName, inputState)
-  if inputState.jump == "pressed" and not lume.find(Falling, spriteName) then
+  local isFalling = lume.find(Falling, spriteName)
+  if inputState.jump == "pressed" and not isFalling then
     local sfx = sfxr.newSound()
     sfx:randomJump()
     local soundData = sfx:generateSoundData()
     love.audio.newSource(soundData):play()
     
-    sprites.mutate(spriteName, {dy = 8})
+    sprites.mutate(spriteName, {dy = 10})
     lume.push(Falling, spriteName)
   end
   if inputState.left == "pressed" then
-    sprites.mutate(spriteName, {dx = -0.6})
+    sprites.mutate(spriteName, {dx = -0.7})
   end
   if inputState.right == "pressed" then
-    sprites.mutate(spriteName, {dx = 0.6})
+    sprites.mutate(spriteName, {dx = 0.7})
   end
   if inputState.left == "held" then
-    sprites.mutate(spriteName, {ddx = -0.2})
+    sprites.mutate(spriteName, {ddx = -0.3})
   end
   if inputState.right == "held" then
-    sprites.mutate(spriteName, {ddx = 0.2})
+    sprites.mutate(spriteName, {ddx = 0.3})
   end
-  if inputState.left == "released" then
-    sprites.mutate(spriteName, {ddx = 0, dx = 0})
-  end
-  if inputState.right == "released" then
-    sprites.mutate(spriteName, {ddx = 0, dx = 0})
+  if inputState.left == "off" and inputState.right == "off" then
+    local old = sprites.get(spriteName, {"dx", "ddx"})
+    if math.abs(old.dx) < 0.1 then
+      sprites.mutate(spriteName, {ddx = 0, dx = 0})
+    else
+      local dragFactor = 0.8
+      if isFalling then dragFactor = 0.95 end
+      sprites.mutate(spriteName, {ddx = old.ddx*dragFactor, dx = old.dx*dragFactor})
+    end
   end
   if inputState.duck == "pressed" then
     local sfx = sfxr.newSound()
