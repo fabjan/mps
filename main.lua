@@ -21,7 +21,7 @@ local NextLine = 0
 
 Sounds = {}
 
--- Number 5 is alive!
+MonkeyLives = false  -- Number 5 is alive!
 RobotChangeTimer = 0
 RobotChangeDelay = 1  -- seconds
 RobotInputMap = {}
@@ -47,9 +47,12 @@ function love.load()
   sounds.load()
   
   -- setup internals
-  sprites.create("robot", "player")
-  sprites.mutate("robot", {x = lume.random(0, PIXEL_WIDTH)})
-  lume.push(Falling, "robot")
+  if MonkeyLives then
+    sprites.create("robot", "player")
+    sprites.mutate("robot", {x = lume.random(0, PIXEL_WIDTH)})
+    lume.push(Falling, "robot")
+  end
+  
   LowrezCanvas = love.graphics.newCanvas()
   LowrezCanvas:setFilter("nearest", "nearest")
 end
@@ -71,14 +74,15 @@ function love.update(dt)
     actOnInput(playerName, inputState)
   end
   
-  -- debugging buddy
-  RobotChangeTimer = RobotChangeTimer + dt
-  if RobotChangeTimer > RobotChangeDelay then
-    RobotChangeTimer = 0
-    robotDoSomething()
+  if MonkeyLives then  -- debugging buddy
+    RobotChangeTimer = RobotChangeTimer + dt
+    if RobotChangeTimer > RobotChangeDelay then
+      RobotChangeTimer = 0
+      robotDoSomething()
+    end
+    actOnInput("robot", RobotInputMap)
+    updateRobotInput()
   end
-  actOnInput("robot", RobotInputMap)
-  updateRobotInput()
   
   for i, spriteName in ipairs(Falling) do
     sprites.mutate(spriteName, {ddy = -0.6})
@@ -255,12 +259,14 @@ function love.draw()
       love.graphics.rectangle("line", f.x*SCALE, displayCoord(f.y)*SCALE, f.w*SCALE, -f.h*SCALE)
     end
     
-    love.graphics.setColor(255, 255, 255)
-    NextLine = LINE_HEIGHT * CONSOLE_LINES
-    xOffset = 550
-    printLine("robot", xOffset)
-    for k, v in pairs(sprites.enumerate("robot")) do
-      printLine(k .. ": " .. tostring(v), xOffset + CONSOLE_MARGIN*2)
+    if MonkeyLives then
+      love.graphics.setColor(255, 255, 255)
+      NextLine = LINE_HEIGHT * CONSOLE_LINES
+      xOffset = 550
+      printLine("robot", xOffset)
+      for k, v in pairs(sprites.enumerate("robot")) do
+        printLine(k .. ": " .. tostring(v), xOffset + CONSOLE_MARGIN*2)
+      end
     end
 	end
   
