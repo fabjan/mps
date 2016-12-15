@@ -21,6 +21,7 @@ local NextLine = 0
 
 Sounds = {}
 
+-- Number 5 is alive!
 RobotChangeTimer = 0
 RobotChangeDelay = 1  -- seconds
 RobotInputMap = {}
@@ -39,6 +40,9 @@ function love.load()
   sounds.load()
   
   -- setup internals
+  sprites.create("robot", "player")
+  sprites.mutate("robot", {x = lume.random(0, PIXEL_WIDTH)})
+  lume.push(Falling, "robot")
   SpriteCanvas = love.graphics.newCanvas()
   SpriteCanvas:setFilter("nearest", "nearest")
 end
@@ -46,12 +50,6 @@ end
 function love.update(dt)
   reloader.update(dt)
   controllers.update(dt)
-  
-  RobotChangeTimer = RobotChangeTimer + dt
-  if RobotChangeTimer > RobotChangeDelay then
-    RobotChangeTimer = 0
-    robotDoSomething()
-  end
   
   for playerNo, gamepad in controllers.enumerate() do
     local inputState = controllers.inputState(playerNo)
@@ -64,6 +62,12 @@ function love.update(dt)
     actOnInput(playerName, inputState)
   end
   
+  -- debugging buddy
+  RobotChangeTimer = RobotChangeTimer + dt
+  if RobotChangeTimer > RobotChangeDelay then
+    RobotChangeTimer = 0
+    robotDoSomething()
+  end
   actOnInput("robot", RobotInputMap)
   updateRobotInput()
   

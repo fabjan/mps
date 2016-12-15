@@ -41,7 +41,6 @@ function sprites.load()
     animations = "gubbe",
     animationState = "idle"
   }
-  sprites.create("robot", "player")
 end
 
 
