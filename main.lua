@@ -50,8 +50,8 @@ function love.load()
   sprites.create("robot", "player")
   sprites.mutate("robot", {x = lume.random(0, PIXEL_WIDTH)})
   lume.push(Falling, "robot")
-  SpriteCanvas = love.graphics.newCanvas()
-  SpriteCanvas:setFilter("nearest", "nearest")
+  LowrezCanvas = love.graphics.newCanvas()
+  LowrezCanvas:setFilter("nearest", "nearest")
 end
 
 function love.update(dt)
@@ -219,7 +219,7 @@ function love.draw()
     end
 	end
   
-  love.graphics.setCanvas(SpriteCanvas)
+  love.graphics.setCanvas(LowrezCanvas)
   love.graphics.clear()
   love.graphics.setColor(255, 255, 255)
   for i, p in ipairs(Platforms) do
@@ -228,7 +228,7 @@ function love.draw()
   sprites.draw()
   love.graphics.setCanvas()
   love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(SpriteCanvas, 0, 0, 0, SCALE, SCALE)
+  love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE, SCALE)
 	console.draw()
 end
 
