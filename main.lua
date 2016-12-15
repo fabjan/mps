@@ -63,11 +63,6 @@ function love.update(dt)
   
   for i, spriteName in ipairs(Falling) do
     local spriteY = sprites.get(spriteName, "y")
-    -- console.log(spriteName.."is falling, y is "..tostring(spriteY))
-    --if spriteY == nil then
-    --  console.log("weird, y for "..spriteName.." was nil")
-    --  spriteY = 0
-    --end
     if spriteY < 0 then
       sprites.mutate(spriteName, {dy = 0, ddy = 0, y = 0})
       lume.remove(Falling, spriteName)
@@ -151,9 +146,9 @@ end
 
 function robotDoSomething()
   local actions = {
-    function () console.log("robot walks") end,
-    function () console.log("robot talks") end,
+    function () console.log("robot noop") end,
     function ()
+      console.log("robot jumps")
       RobotInputMap["jump"] = "pressed"
     end
   }
@@ -165,33 +160,43 @@ function updateRobotInput()
 end
 
 function love.draw()
-  love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), CONSOLE_MARGIN, WINDOW_HEIGHT-LINE_HEIGHT)
-	-- debug print controller map state
-	local xOffset
-	love.graphics.setColor(0,200,0)
-	for player, gamepad in controllers.enumerate() do
-		NextLine = LINE_HEIGHT * CONSOLE_LINES
-		xOffset = CONSOLE_MARGIN + (player - 1) * 150
-		printLine("player " .. tostring(player), xOffset)
-		xOffset = xOffset + CONSOLE_MARGIN*2
-		if (gamepad:isConnected()) then
-			for k, v in pairs(controllers.inputState(player)) do
-				printLine(k .. ": " .. tostring(v), xOffset)
-			end
-		else
-			printLine("controller not connected", xOffset)
-		end
+  love.graphics.setColor(255, 255, 255)
+  if console.showing() then
+    -- debug print things
+    love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), CONSOLE_MARGIN, WINDOW_HEIGHT-LINE_HEIGHT)
+    local xOffset
+    local consoleBottom = LINE_HEIGHT * CONSOLE_LINES
+    
+    for player, gamepad in controllers.enumerate() do
+      NextLine = consoleBottom
+      xOffset = CONSOLE_MARGIN + (player - 1) * 200
+      printLine("player " .. tostring(player), xOffset)
+      xOffset = xOffset + CONSOLE_MARGIN*2
+      if (gamepad:isConnected()) then
+        for k, v in pairs(controllers.inputState(player)) do
+          printLine(k .. ": " .. tostring(v), xOffset)
+        end
+      else
+        printLine("controller not connected", xOffset)
+      end
+      for k, v in pairs(sprites.enumerate("player"..player)) do
+        printLine(k .. ": " .. tostring(v), xOffset)
+      end
+    end
+    
+    NextLine = LINE_HEIGHT * CONSOLE_LINES
+    xOffset = 550
+    printLine("robot", xOffset)
+    for k, v in pairs(sprites.enumerate("robot")) do
+      printLine(k .. ": " .. tostring(v), xOffset + CONSOLE_MARGIN*2)
+    end
 	end
-  
-  NextLine = LINE_HEIGHT * CONSOLE_LINES
-  for k, v in pairs(sprites.enumerate("player")) do
-    printLine("player."..k.."="..v, 300)
-  end
   
   love.graphics.setCanvas(SpriteCanvas)
   love.graphics.clear()
   sprites.draw()
   love.graphics.setCanvas()
+  love.graphics.setColor(255, 255, 255)
   love.graphics.draw(SpriteCanvas, 0, 0, 0, SCALE, SCALE)
 	console.draw()
 end
