@@ -81,27 +81,63 @@ function love.update(dt)
   updateRobotInput()
   
   for i, spriteName in ipairs(Falling) do
-    local spriteY = sprites.get(spriteName, "y")
-    if spriteY < 0 then
-      sprites.mutate(spriteName, {dy = 0, ddy = 0, y = 0})
-      lume.remove(Falling, spriteName)
-    else
-      sprites.mutate(spriteName, {ddy = -0.6})
-    end
+    sprites.mutate(spriteName, {ddy = -0.6})
   end
   
   sprites.update(dt)
-  
+  resolvePlatforming()
+  clampToScreen()
+
+  sounds.update(dt)
+end
+
+function resolvePlatforming()
+  -- well, this will be fast?
+  for i, spriteName in ipairs(Falling) do
+    local feet = sprites.getFeet(spriteName)
+    local dy = sprites.get(spriteName, "dy")
+    if feet then
+      for i, platform in ipairs(Platforms) do
+        if isCollision(feet, platform) and dy < 0 then
+          land(spriteName)
+          sprites.mutate(spriteName, {y = platform.y})
+        end
+      end
+    end
+  end
+end
+
+function isCollision(rect1, rect2)
+  -- from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+  return (
+    rect1.x           < rect2.x + rect2.w and
+    rect1.x + rect1.w > rect2.x           and
+    rect1.y           < rect2.y + rect2.h and
+    rect1.h + rect1.y > rect2.y
+  )
+end
+
+function clampToScreen()
+  -- Holy Leaky Abstraction Batman, how will this EVER pass review!?
   for i, spriteName in ipairs(Players) do
-    -- Holy Leaky Abstraction Batman, how will this EVER pass review!?
     local spriteInfo = sprites.get(spriteName, {"x", "width"})
     local xOnScreen = lume.clamp(spriteInfo.x, 0, PIXEL_WIDTH-spriteInfo.width)
     if not (spriteInfo.x == xOnScreen) then
       sprites.mutate(spriteName, {x = xOnScreen, dx = 0, ddx = 0})
     end
   end
+  for i, spriteName in ipairs(Falling) do
+    local spriteY = sprites.get(spriteName, "y")
+    if spriteY < 0 then
+      land(spriteName)
+      sprites.mutate(spriteName, {y = 0})
+    end
+  end
+end
 
-  sounds.update(dt)
+function land(spriteName)
+  sprites.mutate(spriteName, {dy = 0, ddy = 0})
+  lume.remove(Falling, spriteName)
 end
 
 function actOnInput(spriteName, inputState)
