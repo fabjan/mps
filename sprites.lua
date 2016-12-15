@@ -31,7 +31,8 @@ function sprites.load()
 	local grid = anim8.newGrid(spriteSize,spriteSize, gubbe:getWidth(),gubbe:getHeight(), 0,0, 1)
 	Animations.gubbe.idle = anim8.newAnimation(grid('1-2',1), 0.1)
 	Prototypes.player = {
-    x = PIXEL_WIDTH/2, y = 0,
+    x = PIXEL_WIDTH/2,
+    y = PIXEL_HEIGHT-spriteSize,
     dx = 0, dy = 0,
     ddx = 0, ddy = 0,
     width = spriteSize*0.6, height = spriteSize,
@@ -108,7 +109,8 @@ function sprites.draw()
       love.graphics.setColor(255, 255, 255)
     end
     local animation = Animations[sprite.animations][sprite.animationState]
-    animation:draw(SpriteSheets.gubbe, lume.round(sprite.x - sprite.xMargin), PIXEL_HEIGHT-lume.round(sprite.y)-sprite.height)
+    local displayY = displayCoord(lume.round(sprite.y))-sprite.height
+    animation:draw(SpriteSheets.gubbe, lume.round(sprite.x - sprite.xMargin), displayY)
   end
 end
 

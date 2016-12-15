@@ -14,3 +14,7 @@ CONSOLE_LINES = 5
 CONSOLE_MARGIN = 4
 
 LURK_LAG = 1
+
+function displayCoord(y)
+  return PIXEL_HEIGHT - y
+end
