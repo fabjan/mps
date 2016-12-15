@@ -84,12 +84,12 @@ end
 function love.gamepadpressed(joystick, button)
 	local controllerNo = indexOf(joystick)
 	if (controllerNo) then
-		console.log("controller #" .. controllerNo, "pressed", button)
+		-- console.log("controller #" .. controllerNo, "pressed", button)
 	end
 end
 
 function love.gamepadreleased(joystick, button)
-	console.log("gamepad released", joystick:getName(), button)
+	-- console.log("gamepad released", joystick:getName(), button)
 end
 
 function love.joystickadded(joystick)
