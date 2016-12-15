@@ -120,7 +120,10 @@ function actOnInput(spriteName, inputState)
     sprites.mutate(spriteName, {ddx = 0, dx = 0})
   end
   if inputState.duck == "pressed" then
-    sprites.mutate(spriteName, {dx = 0})
+    local sfx = sfxr.newSound()
+    sfx:randomExplosion()
+    local soundData = sfx:generateSoundData()
+    love.audio.newSource(soundData):play()
   end
 end
 
