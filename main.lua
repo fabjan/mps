@@ -245,7 +245,7 @@ function love.draw()
   if console.showing() then
     -- debug print things
     love.graphics.setColor(255, 255, 255)
-    love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), CONSOLE_MARGIN, WINDOW_HEIGHT-LINE_HEIGHT)
+    love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), WINDOW_WIDTH - 100, LINE_HEIGHT)
     local xOffset
     local consoleBottom = LINE_HEIGHT * CONSOLE_LINES
     
