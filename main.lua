@@ -21,6 +21,9 @@ local NextLine = 0
 
 Sounds = {}
 
+RobotChangeTimer = 0
+RobotChangeDelay = 1  -- seconds
+RobotInputMap = {}
 
 -- Sprite collections
 Players = {"player"}
@@ -44,39 +47,19 @@ function love.update(dt)
   reloader.update(dt)
   controllers.update(dt)
   
+  RobotChangeTimer = RobotChangeTimer + dt
+  if RobotChangeTimer > RobotChangeDelay then
+    RobotChangeTimer = 0
+    robotDoSomething()
+  end
+  
   for player, gamepad in controllers.enumerate() do
     local inputState = controllers.inputState(player)
-    if inputState.jump == "pressed" then
-      local sfx = sfxr.newSound()
-      sfx:randomJump()
-      local soundData = sfx:generateSoundData()
-      love.audio.newSource(soundData):play()
-      
-      sprites.mutate("player", {dy = 8})
-      lume.push(Falling, "player")
-    end
-    if inputState.left == "pressed" then
-      sprites.mutate("player", {dx = -0.6})
-    end
-    if inputState.right == "pressed" then
-      sprites.mutate("player", {dx = 0.6})
-    end
-    if inputState.left == "held" then
-      sprites.mutate("player", {ddx = -0.2})
-    end
-    if inputState.right == "held" then
-      sprites.mutate("player", {ddx = 0.2})
-    end
-    if inputState.left == "released" then
-      sprites.mutate("player", {ddx = 0, dx = 0})
-    end
-    if inputState.right == "released" then
-      sprites.mutate("player", {ddx = 0, dx = 0})
-    end
-    if inputState.duck == "pressed" then
-      sprites.mutate("player", {dx = 0})
-    end
+    actOnInput("player", inputState)
   end
+  
+  actOnInput("robot", RobotInputMap)
+  updateRobotInput()
   
   for i, spriteName in ipairs(Falling) do
     local spriteY = sprites.get(spriteName, "y")
@@ -107,6 +90,39 @@ function love.update(dt)
   sounds.update(dt)
 end
 
+function actOnInput(spriteName, inputState)
+  if inputState.jump == "pressed" and not lume.find(Falling, spriteName) then
+    local sfx = sfxr.newSound()
+    sfx:randomJump()
+    local soundData = sfx:generateSoundData()
+    love.audio.newSource(soundData):play()
+    
+    sprites.mutate(spriteName, {dy = 8})
+    lume.push(Falling, spriteName)
+  end
+  if inputState.left == "pressed" then
+    sprites.mutate(spriteName, {dx = -0.6})
+  end
+  if inputState.right == "pressed" then
+    sprites.mutate(spriteName, {dx = 0.6})
+  end
+  if inputState.left == "held" then
+    sprites.mutate(spriteName, {ddx = -0.2})
+  end
+  if inputState.right == "held" then
+    sprites.mutate(spriteName, {ddx = 0.2})
+  end
+  if inputState.left == "released" then
+    sprites.mutate(spriteName, {ddx = 0, dx = 0})
+  end
+  if inputState.right == "released" then
+    sprites.mutate(spriteName, {ddx = 0, dx = 0})
+  end
+  if inputState.duck == "pressed" then
+    sprites.mutate(spriteName, {dx = 0})
+  end
+end
+
 function love.keypressed(key)
 	if key == "tab" then
 		console.toggle()
@@ -131,6 +147,21 @@ function love.keypressed(key)
       love.audio.newSource(soundData):play()
     end
   end
+end
+
+function robotDoSomething()
+  local actions = {
+    function () console.log("robot walks") end,
+    function () console.log("robot talks") end,
+    function ()
+      RobotInputMap["jump"] = "pressed"
+    end
+  }
+  lume.randomchoice(actions)()
+end
+
+function updateRobotInput()
+  RobotInputMap["jump"] = nil
 end
 
 function love.draw()

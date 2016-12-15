@@ -29,6 +29,11 @@ function sprites.load()
     animations = "gubbe",
     animationState = "idle"
   }
+  Sprites.robot = {}
+  for k,v in pairs(Sprites.player) do
+    Sprites.robot[k] = v
+  end
+  Sprites.robot.x = PIXEL_WIDTH/2
 end
 
 function sprites.get(spriteName, keys)
