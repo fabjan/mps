@@ -21,8 +21,9 @@ local NextLine = 0
 
 Sounds = {}
 
-Players = {}
 
+-- Sprite collections
+Players = {"player"}
 Falling = {}
 
 function love.load()
@@ -51,7 +52,7 @@ function love.update(dt)
       local soundData = sfx:generateSoundData()
       love.audio.newSource(soundData):play()
       
-      sprites.mutate("player", {dy = -8})
+      sprites.mutate("player", {dy = 8})
       lume.push(Falling, "player")
     end
     if inputState.left == "pressed" then
@@ -84,15 +85,25 @@ function love.update(dt)
     --  console.log("weird, y for "..spriteName.." was nil")
     --  spriteY = 0
     --end
-    if spriteY > 100 then
-      sprites.mutate(spriteName, {dy = 0, ddy = 0, y = 100})
+    if spriteY < 0 then
+      sprites.mutate(spriteName, {dy = 0, ddy = 0, y = 0})
       lume.remove(Falling, spriteName)
     else
-      sprites.mutate(spriteName, {ddy = 0.6})
+      sprites.mutate(spriteName, {ddy = -0.6})
     end
   end
   
   sprites.update(dt)
+  
+  for i, spriteName in ipairs(Players) do
+    -- Holy Leaky Abstraction Batman, how will this EVER pass review!?
+    local spriteInfo = sprites.get(spriteName, {"x", "width"})
+    local xOnScreen = lume.clamp(spriteInfo.x, 0, PIXEL_WIDTH-spriteInfo.width)
+    if not (spriteInfo.x == xOnScreen) then
+      sprites.mutate(spriteName, {x = xOnScreen, dx = 0, ddx = 0})
+    end
+  end
+
   sounds.update(dt)
 end
 
