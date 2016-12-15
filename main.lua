@@ -26,7 +26,7 @@ RobotChangeDelay = 1  -- seconds
 RobotInputMap = {}
 
 -- Sprite collections
-Players = {"player"}
+Players = {}
 Falling = {}
 
 function love.load()

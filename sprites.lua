@@ -8,9 +8,19 @@ local Animations = {
 	gubbe = {}
 }
 
+local Prototypes = {}
+
 local Sprites = {}
 
 local sprites = {}
+
+function sprites.create(name, prototype)
+  local newSprite = {}
+  for k,v in pairs(Prototypes[prototype]) do
+    newSprite[k] = v
+  end
+  Sprites[name] = newSprite
+end
 
 function sprites.load()
 	local gubbe = love.graphics.newImage('gubbe.png')
@@ -20,21 +30,19 @@ function sprites.load()
   
 	local grid = anim8.newGrid(spriteSize,spriteSize, gubbe:getWidth(),gubbe:getHeight(), 0,0, 1)
 	Animations.gubbe.idle = anim8.newAnimation(grid('1-2',1), 0.1)
-	Sprites.player = {
-    x = 0, y = 0,
+	Prototypes.player = {
+    x = PIXEL_WIDTH/2, y = 0,
     dx = 0, dy = 0,
     ddx = 0, ddy = 0,
     width = spriteSize*0.6, height = spriteSize,
     xMargin = spriteSize*0.4/2,
+    color = {255, 255, 255},
     animations = "gubbe",
     animationState = "idle"
   }
-  Sprites.robot = {}
-  for k,v in pairs(Sprites.player) do
-    Sprites.robot[k] = v
-  end
-  Sprites.robot.x = PIXEL_WIDTH/2
+  sprites.create("robot", "player")
 end
+
 
 function sprites.get(spriteName, keys)
   local sprite = Sprites[spriteName]
@@ -94,6 +102,11 @@ end
 
 function sprites.draw()
   for name, sprite in pairs(Sprites) do
+    if sprite.color then
+      love.graphics.setColor(sprite.color)
+    else
+      love.graphics.setColor(255, 255, 255)
+    end
     local animation = Animations[sprite.animations][sprite.animationState]
     animation:draw(SpriteSheets.gubbe, lume.round(sprite.x - sprite.xMargin), PIXEL_HEIGHT-lume.round(sprite.y)-sprite.height)
   end
