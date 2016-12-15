@@ -62,8 +62,10 @@ function love.update(dt)
     local inputState = controllers.inputState(playerNo)
     local playerName = "player"..playerNo
     if not lume.find(Players, playerName) then
-      lume.push(Players, playerName)
       sprites.create(playerName, "player")
+      sprites.mutate(playerName, {x = lume.random(0, PIXEL_WIDTH)})
+      lume.push(Players, playerName)
+      lume.push(Falling, playerName)
       console.log("player "..playerNo.." spawned!")
     end
     actOnInput(playerName, inputState)
@@ -205,9 +207,16 @@ function love.draw()
       else
         printLine("controller not connected", xOffset)
       end
-      for k, v in pairs(sprites.enumerate("player"..player)) do
+      local spriteName = "player"..player
+      for k, v in pairs(sprites.enumerate(spriteName)) do
         printLine(k .. ": " .. tostring(v), xOffset)
       end
+      local r = sprites.getRect(spriteName)
+      love.graphics.setColor(0, 255, 0)
+      love.graphics.rectangle("line", r.x*SCALE, displayCoord(r.y)*SCALE, r.w*SCALE, -r.h*SCALE)
+      local f = sprites.getFeet(spriteName)
+      love.graphics.setColor(255, 0, 255)
+      love.graphics.rectangle("line", f.x*SCALE, displayCoord(f.y)*SCALE, f.w*SCALE, -f.h*SCALE)
     end
     
     love.graphics.setColor(255, 255, 255)
