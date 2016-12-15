@@ -68,6 +68,30 @@ function sprites.get(spriteName, keys)
   end
 end
 
+function sprites.getRect(spriteName)
+  local sprite = Sprites[spriteName]
+  if not sprite then return nil end
+  
+  return {
+    x = sprite.x,
+    y = sprite.y,
+    w = sprite.width,
+    h = sprite.height
+  }
+end
+
+function sprites.getFeet(spriteName)
+  local sprite = Sprites[spriteName]
+  if not sprite then return nil end
+  
+  return {
+    x = sprite.x,
+    y = sprite.y,
+    w = sprite.width,
+    h = 1
+  }
+end
+
 function sprites.enumerate(spriteName)
   local sprite = Sprites[spriteName]
   local result = {}
