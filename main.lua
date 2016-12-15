@@ -53,9 +53,15 @@ function love.update(dt)
     robotDoSomething()
   end
   
-  for player, gamepad in controllers.enumerate() do
-    local inputState = controllers.inputState(player)
-    actOnInput("player", inputState)
+  for playerNo, gamepad in controllers.enumerate() do
+    local inputState = controllers.inputState(playerNo)
+    local playerName = "player"..playerNo
+    if not lume.find(Players, playerName) then
+      lume.push(Players, playerName)
+      sprites.create(playerName, "player")
+      console.log("player "..playerNo.." spawned!")
+    end
+    actOnInput(playerName, inputState)
   end
   
   actOnInput("robot", RobotInputMap)
