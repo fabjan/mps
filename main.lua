@@ -30,6 +30,13 @@ RobotInputMap = {}
 Players = {}
 Falling = {}
 
+-- Static things
+Platforms = {
+  {x=0,y=10, w=PIXEL_WIDTH, h=10},
+  {x=0,y=100, w=PIXEL_WIDTH/2, h=10},
+  {x=PIXEL_WIDTH*0.75,y=70, w=PIXEL_WIDTH/5, h=10}
+}
+
 function love.load()
 	love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
 	love.graphics.setFont(love.graphics.newFont(FONT_NAME, FONT_SIZE))
@@ -178,14 +185,15 @@ function updateRobotInput()
 end
 
 function love.draw()
-  love.graphics.setColor(255, 255, 255)
   if console.showing() then
     -- debug print things
+    love.graphics.setColor(255, 255, 255)
     love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), CONSOLE_MARGIN, WINDOW_HEIGHT-LINE_HEIGHT)
     local xOffset
     local consoleBottom = LINE_HEIGHT * CONSOLE_LINES
     
     for player, gamepad in controllers.enumerate() do
+      love.graphics.setColor(255, 255, 255)
       NextLine = consoleBottom
       xOffset = CONSOLE_MARGIN + (player - 1) * 200
       printLine("player " .. tostring(player), xOffset)
@@ -202,6 +210,7 @@ function love.draw()
       end
     end
     
+    love.graphics.setColor(255, 255, 255)
     NextLine = LINE_HEIGHT * CONSOLE_LINES
     xOffset = 550
     printLine("robot", xOffset)
@@ -212,6 +221,10 @@ function love.draw()
   
   love.graphics.setCanvas(SpriteCanvas)
   love.graphics.clear()
+  love.graphics.setColor(255, 255, 255)
+  for i, p in ipairs(Platforms) do
+    love.graphics.rectangle("fill", p.x, displayCoord(p.y), p.w, p.h)
+  end
   sprites.draw()
   love.graphics.setCanvas()
   love.graphics.setColor(255, 255, 255)
