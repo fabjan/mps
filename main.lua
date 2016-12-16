@@ -201,10 +201,10 @@ function actOnInput(spriteName, inputState)
     lume.remove(Hanging, spriteName)
   end
   if inputState.left == "pressed" then
-    sprites.mutate(spriteName, {dx = -RUNNING_START})
+    sprites.mutate(spriteName, {dx = -RUNNING_START, flipX = true})
   end
   if inputState.right == "pressed" then
-    sprites.mutate(spriteName, {dx = RUNNING_START})
+    sprites.mutate(spriteName, {dx = RUNNING_START, flipX = false})
   end
   if inputState.left == "held" then
     sprites.mutate(spriteName, {ddx = -RUNNING_ACCEL})

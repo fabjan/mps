@@ -31,15 +31,18 @@ function sprites.load()
 	local grid = anim8.newGrid(spriteSize,spriteSize, gubbe:getWidth(),gubbe:getHeight(), 0,0, 1)
 	Animations.gubbe.idle = anim8.newAnimation(grid('1-2',1), 0.1)
 	Prototypes.player = {
-    x = PIXEL_WIDTH/2,
-    y = PIXEL_HEIGHT-spriteSize,
-    dx = 0, dy = 0,
-    ddx = 0, ddy = 0,
-    width = spriteSize*0.6, height = spriteSize,
-    xMargin = spriteSize*0.4/2,
-    color = {255, 255, 255},
-    animations = "gubbe",
-    animationState = "idle"
+    x              = PIXEL_WIDTH/2,
+    y              = PIXEL_HEIGHT-spriteSize,
+    dx             = 0,
+    dy             = 0,
+    ddx            = 0,
+    ddy            = 0,
+    width          = spriteSize*0.6, height = spriteSize,
+    xMargin        = spriteSize*0.4/2,
+    color          = {255, 255, 255},
+    animations     = "gubbe",
+    animationState = "idle",
+    flipX          = false
   }
 end
 
@@ -133,7 +136,11 @@ function sprites.draw()
     end
     local animation = Animations[sprite.animations][sprite.animationState]
     local displayY = displayCoord(lume.round(sprite.y))-sprite.height
-    animation:draw(SpriteSheets.gubbe, lume.round(sprite.x - sprite.xMargin), displayY)
+    local flipXScale = 1
+    local flipXOffset = 0
+    if sprite.flipX then flipXScale = -1 end
+    if sprite.flipX then flipXOffset = sprite.width + 2*sprite.xMargin end
+    animation:draw(SpriteSheets.gubbe, lume.round(sprite.x - sprite.xMargin + flipXOffset), displayY, 0, flipXScale, 1)
   end
 end
 
