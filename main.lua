@@ -32,10 +32,20 @@ Falling = {}
 Fallers = {}
 
 -- Static things
+local ph = PIXEL_HEIGHT/20
 Platforms = {
-  {x=0,y=20, w=PIXEL_WIDTH, h=20},
-  {x=0,y=100, w=PIXEL_WIDTH/2, h=20},
-  {x=PIXEL_WIDTH*0.75,y=70, w=PIXEL_WIDTH/5, h=20}
+  {
+    x=0, y=ph,
+    w=PIXEL_WIDTH, h=ph
+  },
+  {
+    x=0, y=ph*9,
+    w=PIXEL_WIDTH/2, h=ph
+  },
+  {
+    x=PIXEL_WIDTH*0.75, y=ph*4,
+    w=PIXEL_WIDTH/5, h=ph
+  }
 }
 
 function love.load()
