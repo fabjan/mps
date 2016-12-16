@@ -33,6 +33,15 @@ function sounds.play(soundName, loop)
   sound:play()
 end
 
+function sounds.stop(soundName)
+  local sound = Sounds[soundName]
+  if not sound then
+    console.log("sound", soundName, "not found")
+    return
+  end
+  sound:stop()
+end
+
 function sounds.playRandom(soundType)
   local sfx = sfxr.newSound()
   sfx["random"..soundType](sfx)

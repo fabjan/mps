@@ -34,6 +34,13 @@ Paper    = {}
 Scissors = {}
 Attacks  = {}
 
+-- Scenes
+Scenes = {
+  menu = {},
+  playing = {}
+}
+CurScene = nil
+
 -- Static things
 local ph = PIXEL_HEIGHT/20
 Platforms = {
@@ -70,9 +77,58 @@ function love.load()
   
   LowrezCanvas = love.graphics.newCanvas()
   LowrezCanvas:setFilter("nearest", "nearest")
+  
+  selectScene("menu")
 end
 
-function love.update(dt)
+function selectScene(newName)
+  local lastScene = Scenes[CurScene]
+  if lastScene and lastScene.leave then lastScene.leave() end
+  local newScene = Scenes[newName]
+  CurScene = newName
+  
+  love.update = newScene.update
+  love.draw   = newScene.draw
+  
+  if not (newScene.init == nil) then
+    newScene.init()
+  end
+end
+
+function Scenes.menu.init()
+  sounds.play("song0", true)
+end
+
+function Scenes.menu.leave()
+  sounds.stop("song0")
+end
+
+
+function Scenes.playing.init()
+  sounds.play("song1", true)
+end
+
+function Scenes.playing.leave()
+  sounds.stop("song1")
+end
+
+function Scenes.menu.update(dt)
+  if love.keyboard.isDown("space") then
+    selectScene("playing")
+  end
+end
+
+function Scenes.menu.draw()
+  love.graphics.setCanvas(LowrezCanvas)
+  love.graphics.clear()
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.print("PRESS PLAY ON TAPE", PIXEL_WIDTH/2-80, PIXEL_HEIGHT/2)
+  love.graphics.setCanvas()
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE, SCALE)
+end
+
+function Scenes.playing.update(dt)
   reloader.update(dt)
   controllers.update(dt)
   
@@ -118,7 +174,6 @@ function love.update(dt)
 
   --sounds.update(dt)
 end
-
 
 function jazzHands()
   for i, playerName in ipairs(Players) do
@@ -315,23 +370,6 @@ function love.keypressed(key)
 	if key == "tab" then
 		console.toggle()
 	end
-  if key == "space" then
-		sounds.play("song0")
-	end
-  local soundMap = {
-    z = "Laser",
-    x = "Jump",
-    c = "Hit",       -- often crap if random
-    v = "Blip",
-    b = "Powerup",
-    n = "Explosion",
-    m = "Pickup"
-  }
-  for k, soundType in pairs(soundMap) do
-    if key == k then
-      sounds.playRandom(soundType)
-    end
-  end
 end
 
 function robotDoSomething()
@@ -349,7 +387,7 @@ function updateRobotInput()
   RobotInputMap["jump"] = nil
 end
 
-function love.draw()
+function Scenes.playing.draw()
   if console.showing() then
     -- debug print things
     love.graphics.setColor(255, 255, 255)
