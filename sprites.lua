@@ -2,11 +2,10 @@ local anim8 = require "anim8"
 local lume = require "lume"
 local console = require "console"
 
-local SpriteSheets = {}
+local SPRITE_SIZE = 32
+local ATTACK_SIZE = 16
 
-local Animations = {
-	gubbe = {}
-}
+local SpriteSheets = {}
 
 local Prototypes = {}
 
@@ -24,21 +23,25 @@ end
 
 local Animations = {
   gubbe = {
-    idle    = { cols = '1-2', rows = 1, delay = 0.8},
-    jumping = { cols =    1 , rows = 1, delay = 1  },
-    hurt    = { cols =    1 , rows = 1, delay = 1  },
-    attack  = { cols =    1 , rows = 1, delay = 0.2}
+    idle    = { cols = '1-2', rows = 1, delay = 0.8, gridSize = SPRITE_SIZE},
+    jumping = { cols =    1 , rows = 1, delay = 1  , gridSize = SPRITE_SIZE},
+    hurt    = { cols =    1 , rows = 1, delay = 1  , gridSize = SPRITE_SIZE},
+    attack  = { cols =    1 , rows = 1, delay = 0.2, gridSize = SPRITE_SIZE}
+  },
+  attack = { -- DRY!
+    rock    = { cols = 1, rows = 1, delay = 1, gridSize = ATTACK_SIZE},
+    paper   = { cols = 1, rows = 1, delay = 1, gridSize = ATTACK_SIZE},
+    scissors= { cols = 1, rows = 1, delay = 1, gridSize = ATTACK_SIZE}
   }
 }
 
 function sprites.load()
-  local spriteSize = 32
 
   for animName, animStates in pairs(Animations) do
     for stateName, frameInfo in pairs(animStates) do
       local stateKey = animName.."_"..stateName
       local img = love.graphics.newImage(stateKey..".png")
-	    local grid = anim8.newGrid(spriteSize,spriteSize, img:getWidth(),img:getHeight(), 0,0)
+	    local grid = anim8.newGrid(frameInfo.gridSize,frameInfo.gridSize, img:getWidth(),img:getHeight(), 0,0)
       SpriteSheets[animName.."_"..stateName] = img
 	    Animations[animName][stateName] = anim8.newAnimation(grid(frameInfo.cols, frameInfo.rows), frameInfo.delay)
     end
@@ -46,17 +49,34 @@ function sprites.load()
   
 	Prototypes.player = {
     x              = PIXEL_WIDTH/2,
-    y              = PIXEL_HEIGHT-spriteSize,
+    y              = PIXEL_HEIGHT-SPRITE_SIZE,
     dx             = 0,
     dy             = 0,
     ddx            = 0,
     ddy            = 0,
-    width          = spriteSize*0.6, height = spriteSize,
-    xMargin        = spriteSize*0.4/2,
+    width          = SPRITE_SIZE*0.6, height = SPRITE_SIZE,
+    xMargin        = SPRITE_SIZE*0.4/2,
     color          = {255, 255, 255},
     animations     = "gubbe",
     animationState = "idle",
-    flipX          = false
+    flipX          = false,
+    visible        = true
+  }
+  
+	Prototypes.attack = {
+    x              = 0,
+    y              = 0,
+    dx             = 0,
+    dy             = 0,
+    ddx            = 0,
+    ddy            = 0,
+    width          = ATTACK_SIZE, height = ATTACK_SIZE,
+    xMargin        = 0,
+    color          = {255, 255, 255},
+    animations     = "attack",
+    animationState = "rock",
+    flipX          = false,
+    visible        = false
   }
 end
 
@@ -143,18 +163,20 @@ end
 
 function sprites.draw()
   for name, sprite in pairs(Sprites) do
-    if sprite.color then
-      love.graphics.setColor(sprite.color)
-    else
-      love.graphics.setColor(255, 255, 255)
+    if sprite.visible then
+      if sprite.color then
+        love.graphics.setColor(sprite.color)
+      else
+        love.graphics.setColor(255, 255, 255)
+      end
+      local animation = Animations[sprite.animations][sprite.animationState]
+      local displayY = displayCoord(lume.round(sprite.y))-sprite.height
+      local flipXScale = 1
+      local flipXOffset = 0
+      if sprite.flipX then flipXScale = -1 end
+      if sprite.flipX then flipXOffset = sprite.width + 2*sprite.xMargin end
+      animation:draw(SpriteSheets[sprite.animations.."_"..sprite.animationState], lume.round(sprite.x - sprite.xMargin + flipXOffset), displayY, 0, flipXScale, 1)
     end
-    local animation = Animations[sprite.animations][sprite.animationState]
-    local displayY = displayCoord(lume.round(sprite.y))-sprite.height
-    local flipXScale = 1
-    local flipXOffset = 0
-    if sprite.flipX then flipXScale = -1 end
-    if sprite.flipX then flipXOffset = sprite.width + 2*sprite.xMargin end
-    animation:draw(SpriteSheets[sprite.animations.."_"..sprite.animationState], lume.round(sprite.x - sprite.xMargin + flipXOffset), displayY, 0, flipXScale, 1)
   end
 end
 
