@@ -5,7 +5,6 @@ require "globals"
 -- some libs
 
 local lume = require "lume"
-local sfxr = require "sfxr"
 
 -- my things
 
@@ -18,8 +17,6 @@ local sounds = require "sounds"
 -- here we go
 
 local NextLine = 0
-
-Sounds = {}
 
 MonkeyLives = false  -- Number 5 is alive!
 RobotChangeTimer = 0
@@ -106,7 +103,7 @@ function love.update(dt)
   resolvePlayerCollisions()
   clampToScreen()
 
-  sounds.update(dt)
+  --sounds.update(dt)
 end
 
 function resolvePlatforming()
@@ -144,7 +141,7 @@ function resolvePlayerCollisions()
         local rectA = sprites.getRect(playerA)
         local rectB = sprites.getRect(playerB)
         if isCollision(rectA, rectB) then
-          playRandom("Explosion")
+          sounds.playRandom("Explosion")
         end
       end
     end
@@ -180,7 +177,7 @@ function clampToScreen()
 end
 
 function land(spriteName)
-  playRandom("Hit")
+  sounds.playRandom("Hit")
   sprites.mutate(spriteName, {dy = 0, ddy = 0})
   lume.remove(Falling, spriteName)
 end
@@ -188,8 +185,7 @@ end
 function actOnInput(spriteName, inputState)
   local isFalling = lume.find(Falling, spriteName)
   if inputState.jump == "pressed" and not isFalling then
-    playRandom("Jump")
-    
+    sounds.playRandom("Jump")
     sprites.mutate(spriteName, {dy = 10})
     lume.push(Falling, spriteName)
   end
@@ -225,7 +221,7 @@ function love.keypressed(key)
 		console.toggle()
 	end
   if key == "space" then
-		sounds.play("test")
+		sounds.play("song0")
 	end
   local soundMap = {
     z = "Laser",
@@ -238,16 +234,9 @@ function love.keypressed(key)
   }
   for k, soundType in pairs(soundMap) do
     if key == k then
-      playRandom(soundType)
+      sounds.playRandom(soundType)
     end
   end
-end
-
-function playRandom(soundType)
-  local sfx = sfxr.newSound()
-  sfx["random"..soundType](sfx)
-  local soundData = sfx:generateSoundData()
-  love.audio.newSource(soundData):play()
 end
 
 function robotDoSomething()

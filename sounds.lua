@@ -1,13 +1,20 @@
 local console = require "console"
 
+local sfxr = require "sfxr"
+
 local sounds = {}
 
-local testFile = "song_0.mp3"
+local SongFiles = {
+  song0 = "song_0.mp3",
+  song1 = "song_1.mp3"
+}
 
 local Sounds = {}
 
 function sounds.load()
-  Sounds.test = love.audio.newSource(testFile, "stream")
+  for trackName, fileName in pairs(SongFiles) do
+    Sounds[trackName] = love.audio.newSource(fileName, "stream")
+  end
 end
 
 function sounds.update(dt)
@@ -23,8 +30,14 @@ function sounds.play(soundName, loop)
   if loop then
     sound:setLooping(true)
   end
-  console.log("playing sound", soundName, "looping:", loop)
   sound:play()
+end
+
+function sounds.playRandom(soundType)
+  local sfx = sfxr.newSound()
+  sfx["random"..soundType](sfx)
+  local soundData = sfx:generateSoundData()
+  love.audio.newSource(soundData):play()
 end
 
 return sounds
