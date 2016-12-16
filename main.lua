@@ -25,6 +25,7 @@ RobotInputMap = {}
 
 -- Sprite collections
 Players  = {}
+Hands    = {}
 Falling  = {}
 Hanging  = {}
 Fallers  = {}
@@ -77,10 +78,13 @@ function love.update(dt)
   for playerNo, gamepad in controllers.enumerate() do
     local inputState = controllers.inputState(playerNo)
     local playerName = "player"..playerNo
+    local handName = "hand"..playerNo
     if not lume.find(Players, playerName) then
       sprites.create(playerName, "player")
+      sprites.create(handName, "attack")
       sprites.mutate(playerName, {x = lume.random(0, PIXEL_WIDTH)})
       lume.push(Players, playerName)
+      Hands[playerName] = handName
       lume.push(Falling, playerName)
       lume.push(Fallers, playerName)
       console.log("player "..playerNo.." spawned!")
@@ -108,8 +112,24 @@ function love.update(dt)
   resolvePlatforming()
   resolvePlayerCollisions()
   clampToScreen()
+  jazzHands()
 
   --sounds.update(dt)
+end
+
+
+function jazzHands()
+  for i, playerName in ipairs(Players) do
+    local handName = Hands[playerName]
+    local playerInfo = sprites.get(playerName, {"x", "y", "flipX", "width", "height", "xMargin"})
+    local newFlipX = playerInfo.flipX
+    local xOffset = playerInfo.width   * 1.1
+    local yOffset = playerInfo.height  * 0.46
+    if newFlipX then xOffset = -xOffset end
+    local newX = playerInfo.x + playerInfo.xMargin/4 + xOffset  -- /4 ought to be enough for anyone
+    local newY = playerInfo.y + yOffset
+    sprites.mutate(handName, {x = newX, y = newY, flipX = newFlipX})
+  end
 end
 
 function resolvePlatforming()
@@ -230,25 +250,24 @@ function actOnInput(spriteName, inputState)
   end
   
   -- attacking
-  local attacking = false
+  local attackName
   if inputState.rock == "pressed" then
-    attacking = true
-    rock(spriteName)
+    attackName = rock(spriteName)
   end
   if inputState.paper == "pressed" then
-    attacking = true
-    paper(spriteName)
+    attackName = paper(spriteName)
   end
   if inputState.scissors == "pressed" then
-    attacking = true
-    scissors(spriteName)
+    attackName = scissors(spriteName)
   end
-  if attacking then
+  if attackName then
     sounds.playRandom("Blip")
     sprites.mutate(spriteName, {animationState = "attack"})
+    sprites.mutate(Hands[spriteName], {visible = true, animationState = attackName})
   end
   if (not attacking) and (inputState.rock == "released" or inputState.paper == "released" or inputState.scissors == "released") then
     sprites.mutate(spriteName, {animationState = "idle"})
+    sprites.mutate(Hands[spriteName], {visible = false})
   end
 end
 
@@ -256,18 +275,21 @@ function rock(spriteName)
   lume.remove(Paper, spriteName)
   lume.remove(Scissors, spriteName)
   lume.push(Rock, spriteName)
+  return "rock"
 end
 
 function paper(spriteName)
   lume.remove(Rock, spriteName)
   lume.remove(Scissors, spriteName)
   lume.push(Paper, spriteName)
+  return "paper"
 end
 
 function scissors(spriteName)
   lume.remove(Rock, spriteName)
   lume.remove(Paper, spriteName)
   lume.push(Scissors, spriteName)
+  return "scissors"
 end
 
 function love.keypressed(key)
