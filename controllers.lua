@@ -8,6 +8,9 @@ local InputMap = {
 	dpright = "right",
   dpdown = "duck",
 	a = "jump",
+  x = "rock",
+  y = "paper",
+  b = "scissors"
 }
 
 local ControllerState = {}
