@@ -24,10 +24,13 @@ RobotChangeDelay = 1  -- seconds
 RobotInputMap = {}
 
 -- Sprite collections
-Players = {}
-Falling = {}
-Hanging = {}
-Fallers = {}
+Players  = {}
+Falling  = {}
+Hanging  = {}
+Fallers  = {}
+Rock     = {}
+Paper    = {}
+Scissors = {}
 
 -- Static things
 local ph = PIXEL_HEIGHT/20
@@ -182,16 +185,18 @@ end
 
 function land(spriteName)
   sounds.playRandom("Hit")
-  sprites.mutate(spriteName, {dy = 0, ddy = 0})
+  sprites.mutate(spriteName, {dy = 0, ddy = 0, animationState = "idle"})
   lume.remove(Falling, spriteName)
 end
 
 function actOnInput(spriteName, inputState)
   local isFalling = lume.find(Falling, spriteName)
   local spriteInfo = sprites.get(spriteName, {"dx", "ddx", "dy"})
+
+  -- jumping
   if inputState.jump == "pressed" and not isFalling then
     sounds.playRandom("Jump")
-    sprites.mutate(spriteName, {dy = JUMP_POWER})
+    sprites.mutate(spriteName, {dy = JUMP_POWER, animationState = "jumping"})
     lume.push(Falling, spriteName)
   end
   if inputState.jump == "held" and isFalling and spriteInfo.dy > 0 and not lume.find(Hanging, spriteName) then
@@ -200,6 +205,8 @@ function actOnInput(spriteName, inputState)
   if inputState.jump == "released" and isFalling then
     lume.remove(Hanging, spriteName)
   end
+  
+  -- moving
   if inputState.left == "pressed" then
     sprites.mutate(spriteName, {dx = -RUNNING_START, flipX = true})
   end
@@ -221,9 +228,46 @@ function actOnInput(spriteName, inputState)
       sprites.mutate(spriteName, {ddx = spriteInfo.ddx*dragFactor,  dx = spriteInfo.dx*dragFactor})
     end
   end
-  if inputState.duck == "pressed" then
-    console.log(spriteName.." ducks!")
+  
+  -- attacking
+  local attacking = false
+  if inputState.rock == "pressed" then
+    attacking = true
+    rock(spriteName)
   end
+  if inputState.paper == "pressed" then
+    attacking = true
+    paper(spriteName)
+  end
+  if inputState.scissors == "pressed" then
+    attacking = true
+    scissors(spriteName)
+  end
+  if attacking then
+    sounds.playRandom("Blip")
+    sprites.mutate(spriteName, {animationState = "attack"})
+  end
+  if (not attacking) and (inputState.rock == "released" or inputState.paper == "released" or inputState.scissors == "released") then
+    sprites.mutate(spriteName, {animationState = "idle"})
+  end
+end
+
+function rock(spriteName)
+  lume.remove(Paper, spriteName)
+  lume.remove(Scissors, spriteName)
+  lume.push(Rock, spriteName)
+end
+
+function paper(spriteName)
+  lume.remove(Rock, spriteName)
+  lume.remove(Scissors, spriteName)
+  lume.push(Paper, spriteName)
+end
+
+function scissors(spriteName)
+  lume.remove(Rock, spriteName)
+  lume.remove(Paper, spriteName)
+  lume.push(Scissors, spriteName)
 end
 
 function love.keypressed(key)
