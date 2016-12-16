@@ -26,6 +26,7 @@ RobotInputMap = {}
 -- Sprite collections
 Players = {}
 Falling = {}
+Hanging = {}
 Fallers = {}
 
 -- Static things
@@ -95,7 +96,9 @@ function love.update(dt)
   end
   
   for i, spriteName in ipairs(Falling) do
-    sprites.mutate(spriteName, {ddy = -0.6})
+    local hang = 1
+    if lume.find(Hanging, spriteName) then hang = JUMP_HANG end
+    sprites.mutate(spriteName, {ddy = LIKE_GRAVITY/hang})
   end
   
   sprites.update(dt)
@@ -121,6 +124,7 @@ function resolvePlatforming()
       end
     elseif feet and not isFalling then
       local isOnSolidGround = false
+      -- check for ground one pixel below the feet
       feet.y = feet.y + 1
       for i, platform in ipairs(Platforms) do
         if isCollision(feet, platform) then
@@ -184,31 +188,37 @@ end
 
 function actOnInput(spriteName, inputState)
   local isFalling = lume.find(Falling, spriteName)
+  local spriteInfo = sprites.get(spriteName, {"dx", "ddx", "dy"})
   if inputState.jump == "pressed" and not isFalling then
     sounds.playRandom("Jump")
-    sprites.mutate(spriteName, {dy = 10})
+    sprites.mutate(spriteName, {dy = JUMP_POWER})
     lume.push(Falling, spriteName)
   end
+  if inputState.jump == "held" and isFalling and spriteInfo.dy > 0 and not lume.find(Hanging, spriteName) then
+    lume.push(Hanging, spriteName)
+  end
+  if inputState.jump == "released" and isFalling then
+    lume.remove(Hanging, spriteName)
+  end
   if inputState.left == "pressed" then
-    sprites.mutate(spriteName, {dx = -0.7})
+    sprites.mutate(spriteName, {dx = -RUNNING_START})
   end
   if inputState.right == "pressed" then
-    sprites.mutate(spriteName, {dx = 0.7})
+    sprites.mutate(spriteName, {dx = RUNNING_START})
   end
   if inputState.left == "held" then
-    sprites.mutate(spriteName, {ddx = -0.3})
+    sprites.mutate(spriteName, {ddx = -RUNNING_ACCEL})
   end
   if inputState.right == "held" then
-    sprites.mutate(spriteName, {ddx = 0.3})
+    sprites.mutate(spriteName, {ddx = RUNNING_ACCEL})
   end
   if inputState.left == "off" and inputState.right == "off" then
-    local old = sprites.get(spriteName, {"dx", "ddx"})
-    if math.abs(old.dx) < 0.1 then
+    if math.abs(spriteInfo.dx) < RUNNING_EPSILON then
       sprites.mutate(spriteName, {ddx = 0, dx = 0})
     else
-      local dragFactor = 0.8
-      if isFalling then dragFactor = 0.95 end
-      sprites.mutate(spriteName, {ddx = old.ddx*dragFactor, dx = old.dx*dragFactor})
+      local dragFactor = GROUND_DRAG
+      if isFalling then dragFactor = AIR_DRAG end
+      sprites.mutate(spriteName, {ddx = spriteInfo.ddx*dragFactor,  dx = spriteInfo.dx*dragFactor})
     end
   end
   if inputState.duck == "pressed" then
