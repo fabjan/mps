@@ -175,7 +175,7 @@ function Scenes.playing.update(dt)
   clampToScreen()
   jazzHands()
   resolvePlayerCollisions()
-  resolveFights()
+  resolveFights(dt)
 
   --sounds.update(dt)
 end
@@ -249,8 +249,20 @@ function attack(aggressor, hand, defender)
   end
 end
 
-function resolveFights()
-  -- left as an excercise for the reader
+function resolveFights(dt)
+  for agressor, fights in pairs(Attacks) do
+    local triggered = {}
+    for defender, attack in pairs(fights) do
+      attack.duration = attack.duration - dt
+      if attack.duration <= 0 then
+        lume.push(triggered, defender)
+      end
+    end
+    for i, defender in ipairs(triggered) do
+      sounds.playRandom("Explosion")
+      fights[defender] = nil
+    end
+  end
 end 
 
 function isCollision(rect1, rect2)
