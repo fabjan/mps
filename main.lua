@@ -32,6 +32,7 @@ Fallers  = {}
 Rock     = {}
 Paper    = {}
 Scissors = {}
+Attacks  = {}
 
 -- Static things
 local ph = PIXEL_HEIGHT/20
@@ -110,9 +111,10 @@ function love.update(dt)
   
   sprites.update(dt)
   resolvePlatforming()
-  resolvePlayerCollisions()
   clampToScreen()
   jazzHands()
+  resolvePlayerCollisions()
+  resolveFights()
 
   --sounds.update(dt)
 end
@@ -163,19 +165,36 @@ end
 
 function resolvePlayerCollisions()
   for i, playerA in ipairs(Players) do
+    local handA = Hands[playerA]
     for j, playerB in ipairs(Players) do
+      local handB = Hands[playerB]
       if not (playerA == playerB) then
-        local rectA = sprites.getRect(playerA)
-        local rectB = sprites.getRect(playerB)
-        if isCollision(rectA, rectB) then
-          sounds.playRandom("Explosion")
-        end
+        local rPA = sprites.getRect(playerA)
+        local rPB = sprites.getRect(playerB)
+        local rHA = sprites.getRect(handA, true)
+        local rHB = sprites.getRect(handB, true)
+        if isCollision(rHA, rPB) then attack(playerA, handA, playerB) end
+        if isCollision(rHB, rPA) then attack(playerB, handB, playerA) end
       end
     end
   end
 end
 
+function attack(aggressor, hand, defender)
+  if nil == Attacks[aggressor] then Attacks[aggressor] = {} end
+  local alreadyAttacking = not (Attacks[aggressor][defender] == nil)
+  if not alreadyAttacking then
+    local attackType = sprites.get(hand, "animationState")
+    Attacks[aggressor][defender] = { duration = ATTACK_DURATION, attackType = attackType }
+  end
+end
+
+function resolveFights()
+  -- left as an excercise for the reader
+end 
+
 function isCollision(rect1, rect2)
+  if rect1 == nil or rect2 == nil then return false end
   -- from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
   return (
     rect1.x           < rect2.x + rect2.w and
@@ -361,6 +380,11 @@ function love.draw()
       local f = sprites.getFeet(spriteName)
       love.graphics.setColor(255, 0, 255)
       love.graphics.rectangle("line", f.x*SCALE, displayCoord(f.y)*SCALE, f.w*SCALE, -f.h*SCALE)
+      local h = sprites.getRect(Hands[spriteName], true)
+      if h then
+        love.graphics.setColor(0, 255, 255)
+        love.graphics.rectangle("line", h.x*SCALE, displayCoord(h.y)*SCALE, h.w*SCALE, -h.h*SCALE)
+      end
     end
     
     if MonkeyLives then

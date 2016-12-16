@@ -105,9 +105,10 @@ function sprites.get(spriteName, keys)
   end
 end
 
-function sprites.getRect(spriteName)
+function sprites.getRect(spriteName, onlyIfVisible)
   local sprite = Sprites[spriteName]
   if not sprite then return nil end
+  if onlyIfVisible and not sprite.visible then return nil end
   
   return {
     x = sprite.x,

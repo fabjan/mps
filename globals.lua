@@ -26,6 +26,8 @@ RUNNING_ACCEL   = PIXEL_WIDTH*0.0004
 RUNNING_EPSILON = 0.1
 GROUND_DRAG     = 0.8
 
+ATTACK_DURATION = 1
+
 function displayCoord(y)
   return PIXEL_HEIGHT - y
 end
