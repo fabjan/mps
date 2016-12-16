@@ -22,14 +22,28 @@ function sprites.create(name, prototype)
   Sprites[name] = newSprite
 end
 
+local Animations = {
+  gubbe = {
+    idle    = { cols = '1-2', rows = 1, delay = 0.8},
+    jumping = { cols =    1 , rows = 1, delay = 1  },
+    hurt    = { cols =    1 , rows = 1, delay = 1  },
+    attack  = { cols =    1 , rows = 1, delay = 0.2}
+  }
+}
+
 function sprites.load()
-	local gubbe = love.graphics.newImage('gubbe.png')
   local spriteSize = 32
+
+  for animName, animStates in pairs(Animations) do
+    for stateName, frameInfo in pairs(animStates) do
+      local stateKey = animName.."_"..stateName
+      local img = love.graphics.newImage(stateKey..".png")
+	    local grid = anim8.newGrid(spriteSize,spriteSize, img:getWidth(),img:getHeight(), 0,0)
+      SpriteSheets[animName.."_"..stateName] = img
+	    Animations[animName][stateName] = anim8.newAnimation(grid(frameInfo.cols, frameInfo.rows), frameInfo.delay)
+    end
+  end
   
-  SpriteSheets.gubbe = gubbe
-  
-	local grid = anim8.newGrid(spriteSize,spriteSize, gubbe:getWidth(),gubbe:getHeight(), 0,0, 1)
-	Animations.gubbe.idle = anim8.newAnimation(grid('1-2',1), 0.1)
 	Prototypes.player = {
     x              = PIXEL_WIDTH/2,
     y              = PIXEL_HEIGHT-spriteSize,
@@ -140,7 +154,7 @@ function sprites.draw()
     local flipXOffset = 0
     if sprite.flipX then flipXScale = -1 end
     if sprite.flipX then flipXOffset = sprite.width + 2*sprite.xMargin end
-    animation:draw(SpriteSheets.gubbe, lume.round(sprite.x - sprite.xMargin + flipXOffset), displayY, 0, flipXScale, 1)
+    animation:draw(SpriteSheets[sprite.animations.."_"..sprite.animationState], lume.round(sprite.x - sprite.xMargin + flipXOffset), displayY, 0, flipXScale, 1)
   end
 end
 
