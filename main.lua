@@ -62,6 +62,9 @@ function love.load()
 	love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
 	love.graphics.setFont(love.graphics.newFont(FONT_NAME, FONT_SIZE))
   
+  SplashScreen = love.graphics.newImage("splash.png")
+  MenuTextY = PIXEL_HEIGHT*0.8
+  
   -- setup modules
   reloader.enable()
   sprites.load()
@@ -113,6 +116,7 @@ function Scenes.playing.leave()
 end
 
 function Scenes.menu.update(dt)
+  MenuTextY = PIXEL_HEIGHT*0.8+math.sin(love.timer.getTime()*2)*5
   if love.keyboard.isDown("space") then
     selectScene("playing")
   end
@@ -122,7 +126,8 @@ function Scenes.menu.draw()
   love.graphics.setCanvas(LowrezCanvas)
   love.graphics.clear()
   love.graphics.setColor(255, 255, 255)
-  love.graphics.print("PRESS PLAY ON TAPE", PIXEL_WIDTH/2-80, PIXEL_HEIGHT/2)
+  love.graphics.draw(SplashScreen)
+  love.graphics.print("PRESS SPACE", PIXEL_WIDTH/2-40, MenuTextY)
   love.graphics.setCanvas()
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE, SCALE)
@@ -369,6 +374,9 @@ end
 function love.keypressed(key)
 	if key == "tab" then
 		console.toggle()
+	end
+	if key == "escape" then
+		selectScene("menu")
 	end
 end
 
