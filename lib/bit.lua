@@ -236,6 +236,8 @@ bit = {
 
 end
 
+return bit
+
 --[[
 for i = 1, 100 do
  for j = 1, 100 do
@@ -245,16 +247,3 @@ for i = 1, 100 do
  end
 end
 --]]
-
-
-
-
-
-
-
-
-
-
-
-
-
