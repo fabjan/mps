@@ -11,6 +11,7 @@ local lume = require "lume"
 local console = require "console"
 local reloader = require "hot_reloading"
 local controllers = require "controllers"
+local netgamepads = require "netgamepads"
 local sprites = require "sprites"
 local sounds = require "sounds"
 
@@ -69,6 +70,7 @@ function love.load()
   reloader.enable()
   sprites.load()
   sounds.load()
+  netgamepads.load()
   
   -- setup internals
   if MonkeyLives then
@@ -120,6 +122,7 @@ function Scenes.menu.update(dt)
   if love.keyboard.isDown("space") then
     selectScene("playing")
   end
+  netgamepads.update(dt)
 end
 
 function Scenes.menu.draw()
@@ -135,6 +138,7 @@ end
 
 function Scenes.playing.update(dt)
   reloader.update(dt)
+  netgamepads.update(dt)
   controllers.update(dt)
   
   for playerNo, gamepad in controllers.enumerate() do
