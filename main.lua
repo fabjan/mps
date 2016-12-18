@@ -24,6 +24,13 @@ RobotChangeTimer = 0
 RobotChangeDelay = 0.2  -- seconds
 RobotInputMap = {}
 
+-- Some rules
+Beats = {
+  rock     = { scissors = true },
+  paper    = { rock     = true },
+  scissors = { paper    = true }
+}
+
 -- Sprite collections
 Players  = {}
 Hands    = {}
@@ -264,23 +271,12 @@ function resolveFights(dt)
       if attack.duration <= 0 then
         if not toRemove[agressor] then toRemove[agressor] = {} end
         toRemove[agressor][defender] = true
-        console.log(agressor.." tries to "..attack.attackType.." "..defender)
         local attackA = attack.attackType
         local attackB = ((Attacks[defender] or {})[agressor] or {}).attackType
         if attackA == attackB then
-	  local flipA = -1
-          local flipD = -1
-          if sprites.get(agressor, "flipX") then flipA = 1 end
-          if sprites.get(defender, "flipX") then flipD = 1 end
-          local aFalling = lume.find(Falling, agressor)
-          local dFalling = lume.find(Falling, defender)
-          console.log(agressor.." and "..defender.." tied!")
-          sounds.playRandom("Blip")
-          if not aFalling then lume.push(Falling, agressor) end
-          if not dFalling then lume.push(Falling, defender) end
-          local impact = JUMP_POWER/2
-          sprites.mutate(agressor, {dy = impact*2, dx = flipA*impact})
-          sprites.mutate(defender, {dy = impact*2, dx = flipD*impact})
+          resolveDraw(agressor, defender)
+        elseif Beats[attackA][attackB] then
+          resolveBeat(agressor, defender) 
         end
       end
     end
@@ -290,7 +286,29 @@ function resolveFights(dt)
       Attacks[agressor][defender] = nil
     end
   end
-end 
+end
+
+function resolveDraw(agressor, defender)
+  console.log(agressor.." and "..defender.." tied!")
+  local impact = JUMP_POWER/3
+  bumpBack(agressor, impact)
+  bumpBack(defender, impact)
+  sounds.playRandom("Hit")
+end
+
+function resolveBeat(agressor, defender)
+  console.log(agressor.." beat "..defender.."!")
+  local impact = JUMP_POWER/2
+  bumpBack(defender, impact)
+  sounds.playRandom("Blip")
+end
+
+function bumpBack(spriteName, impact)
+  if not lume.find(Falling, spriteName) then lume.push(Falling, spriteName) end
+  local flipFactor = -1
+  if sprites.get(spriteName, "flipX") then flipFactor = 1 end
+  sprites.mutate(spriteName, {dy = impact*2, dx = flipFactor*impact})
+end
 
 function isCollision(rect1, rect2)
   if rect1 == nil or rect2 == nil then return false end
