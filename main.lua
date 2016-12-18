@@ -19,9 +19,9 @@ local sounds = require "sounds"
 
 local NextLine = 0
 
-MonkeyLives = false  -- Number 5 is alive!
+MonkeyLives = true  -- Number 5 is alive!
 RobotChangeTimer = 0
-RobotChangeDelay = 1  -- seconds
+RobotChangeDelay = 0.2  -- seconds
 RobotInputMap = {}
 
 -- Sprite collections
@@ -75,9 +75,12 @@ function love.load()
   -- setup internals
   if MonkeyLives then
     sprites.create("robot", "player")
+    sprites.create("robothand", "attack")
+    Hands["robot"] = "robothand"
     sprites.mutate("robot", {x = lume.random(0, PIXEL_WIDTH)})
     lume.push(Falling, "robot")
     lume.push(Fallers, "robot")
+    lume.push(Players, "robot")
   end
   
   LowrezCanvas = love.graphics.newCanvas()
@@ -265,8 +268,19 @@ function resolveFights(dt)
         local attackA = attack.attackType
         local attackB = ((Attacks[defender] or {})[agressor] or {}).attackType
         if attackA == attackB then
+	  local flipA = -1
+          local flipD = -1
+          if sprites.get(agressor, "flipX") then flipA = 1 end
+          if sprites.get(defender, "flipX") then flipD = 1 end
+          local aFalling = lume.find(Falling, agressor)
+          local dFalling = lume.find(Falling, defender)
           console.log(agressor.." and "..defender.." tied!")
           sounds.playRandom("Blip")
+          if not aFalling then lume.push(Falling, agressor) end
+          if not dFalling then lume.push(Falling, defender) end
+          local impact = JUMP_POWER/2
+          sprites.mutate(agressor, {dy = impact*2, dx = flipA*impact})
+          sprites.mutate(defender, {dy = impact*2, dx = flipD*impact})
         end
       end
     end
@@ -405,14 +419,16 @@ function love.keypressed(key)
 end
 
 function robotDoSomething()
-  local actions = {
-    function () console.log("robot noop") end,
-    function ()
-      console.log("robot jumps")
-      RobotInputMap["jump"] = "pressed"
-    end
+  local buttons = {
+    --"jump",
+    --"rock",
+    "paper"
+    --"scissors",
+    --"left",
+    --"right"
   }
-  lume.randomchoice(actions)()
+  local actions = {"pressed", "released"}
+  RobotInputMap[lume.randomchoice(buttons)] = lume.randomchoice(actions)
 end
 
 function updateRobotInput()
