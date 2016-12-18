@@ -75,6 +75,7 @@ Platforms = {
 }
 
 function love.load()
+  math.randomseed(os.time())
   love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
   love.graphics.setFont(CONSOLE_FONT)
   
