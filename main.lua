@@ -40,7 +40,11 @@ Fallers  = {}
 Rock     = {}
 Paper    = {}
 Scissors = {}
-Attacks  = {}
+
+-- Other tracking
+Attacks = {}
+Score   = {}
+Lives   = {}
 
 -- Scenes
 Scenes = {
@@ -158,11 +162,15 @@ function Scenes.playing.update(dt)
     if not lume.find(Players, playerName) then
       sprites.create(playerName, "player")
       sprites.create(handName, "attack")
-      sprites.mutate(playerName, {x = lume.random(0, PIXEL_WIDTH)})
+      local playerColor = PLAYER_COLORS[playerNo % 14 + 1]
+      local playerX = lume.random(0, PIXEL_WIDTH)
+      sprites.mutate(playerName, {x = playerX, color = playerColor})
       lume.push(Players, playerName)
       Hands[playerName] = handName
       lume.push(Falling, playerName)
       lume.push(Fallers, playerName)
+      Score[playerName] = 0
+      Lives[playerName] = LIVES
       console.log("player "..playerNo.." spawned!")
     end
     actOnInput(playerName, inputState)
