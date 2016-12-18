@@ -60,8 +60,8 @@ Platforms = {
 }
 
 function love.load()
-	love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
-	love.graphics.setFont(love.graphics.newFont(FONT_NAME, FONT_SIZE))
+  love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+  love.graphics.setFont(love.graphics.newFont(FONT_NAME, FONT_SIZE))
   
   SplashScreen = love.graphics.newImage("splash.png")
   MenuTextY = PIXEL_HEIGHT*0.8
@@ -254,17 +254,26 @@ function attack(aggressor, hand, defender)
 end
 
 function resolveFights(dt)
+  local toRemove = {}
   for agressor, fights in pairs(Attacks) do
-    local triggered = {}
     for defender, attack in pairs(fights) do
       attack.duration = attack.duration - dt
       if attack.duration <= 0 then
-        lume.push(triggered, defender)
+        if not toRemove[agressor] then toRemove[agressor] = {} end
+        toRemove[agressor][defender] = true
+        console.log(agressor.." tries to "..attack.attackType.." "..defender)
+        local attackA = attack.attackType
+        local attackB = ((Attacks[defender] or {})[agressor] or {}).attackType
+        if attackA == attackB then
+          console.log(agressor.." and "..defender.." tied!")
+          sounds.playRandom("Blip")
+        end
       end
     end
-    for i, defender in ipairs(triggered) do
-      sounds.playRandom("Explosion")
-      fights[defender] = nil
+  end
+  for agressor, defenders in pairs(toRemove) do
+    for defender, v in pairs(defenders) do
+      Attacks[agressor][defender] = nil
     end
   end
 end 
@@ -356,7 +365,6 @@ function actOnInput(spriteName, inputState)
     attackName = scissors(spriteName)
   end
   if attackName then
-    sounds.playRandom("Blip")
     sprites.mutate(spriteName, {animationState = "attack"})
     sprites.mutate(Hands[spriteName], {visible = true, animationState = attackName})
   end
