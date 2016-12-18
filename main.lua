@@ -22,7 +22,7 @@ ShowFPS = false
 ShowBoundingBoxes = false
 ShowDebugInfo = false
 
-MonkeyLives = true  -- Number 5 is alive!
+MonkeyLives = false  -- Number 5 is alive!
 RobotChangeTimer = 0
 RobotChangeDelay = 0.2  -- seconds
 RobotInputMap = {}
