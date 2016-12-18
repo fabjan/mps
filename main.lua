@@ -358,7 +358,7 @@ function bumpBack(spriteName, impact)
   if not lume.find(Falling, spriteName) then lume.push(Falling, spriteName) end
   local flipFactor = -1
   if sprites.get(spriteName, "flipX") then flipFactor = 1 end
-  sprites.mutate(spriteName, {dy = impact*2, dx = flipFactor*impact})
+  sprites.mutate(spriteName, {dy = impact*2, dx = flipFactor*impact, animationState="hurt"})
 end
 
 function isCollision(rect1, rect2)
