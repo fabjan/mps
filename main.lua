@@ -167,9 +167,10 @@ function Scenes.playing.update(dt)
     if not lume.find(Players, playerName) then
       sprites.create(playerName, "player")
       sprites.create(handName, "attack")
-      local playerColor = PLAYER_COLORS[playerNo % 14 + 1]
+      local playerColor = lume.randomchoice(PLAYER_COLORS) --[playerNo % 14 + 1]
+      local playerTag = randomName()
       local playerX = lume.random(0, PIXEL_WIDTH)
-      sprites.mutate(playerName, {x = playerX, color = playerColor, tag = randomName()})
+      sprites.mutate(playerName, {x = playerX, color = playerColor, tag = playerTag})
       sprites.mutate(handName, {color = playerColor})
       lume.push(Players, playerName)
       Hands[playerName] = handName
@@ -442,9 +443,9 @@ function scissors(spriteName)
 end
 
 function randomName(tries)
-  local first   = lume.randomchoice({"F", "P", "T", "G", "B", "K", "Y"})
+  local first   = lume.randomchoice({"P", "T", "G", "B", "K", "J"})
   local second  = lume.randomchoice({"A", "O", "U", "E", "I"})
-  local third   = lume.randomchoice({"B", "P", "T", "D", "S", "Z", "E"})
+  local third   = lume.randomchoice({"B", "P", "T", "D", "S", "Z", "E", "F"})
   local newName = first..second..third
   if not lume.find(Names, newName) then
     return newName
