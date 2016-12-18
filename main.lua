@@ -43,12 +43,15 @@ Fallers  = {}
 Rock     = {}
 Paper    = {}
 Scissors = {}
+Dead     = {}
 
 -- Other tracking
 Attacks = {}
 Score   = {}
 Lives   = {}
 Names   = {}
+Tag     = {}
+Color   = {}
 
 -- Scenes
 Scenes = {
@@ -93,6 +96,10 @@ function love.load()
     sprites.create("robot", "player")
     sprites.create("robothand", "attack")
     Hands["robot"] = "robothand"
+    Lives["robot"] = 5
+    Score["robot"] = 0
+    Tag["robot"]   = "BOT"
+    Color["robot"] = { 0xFF, 0xFF, 0xFF }
     sprites.mutate("robot", {x = lume.random(0, PIXEL_WIDTH), tag = "BOT"})
     lume.push(Falling, "robot")
     lume.push(Fallers, "robot")
@@ -173,11 +180,13 @@ function Scenes.playing.update(dt)
       sprites.mutate(playerName, {x = playerX, color = playerColor, tag = playerTag})
       sprites.mutate(handName, {color = playerColor})
       lume.push(Players, playerName)
-      Hands[playerName] = handName
       lume.push(Falling, playerName)
       lume.push(Fallers, playerName)
+      Hands[playerName] = handName
       Score[playerName] = 0
       Lives[playerName] = LIVES
+      Tag[playerName]   = playerTag
+      Color[playerName] = playerColor
       console.log("player "..playerNo.." spawned!")
     end
     actOnInput(playerName, inputState)
@@ -205,8 +214,31 @@ function Scenes.playing.update(dt)
   jazzHands()
   resolvePlayerCollisions()
   resolveFights(dt)
+  killAllDeadPlayers()
 
   --sounds.update(dt)
+end
+
+function killAllDeadPlayers()
+  local died = {}
+  for i, playerName in ipairs(Players) do
+    local lives = Lives[playerName]
+    if lives <= 0 then
+      lume.push(died, playerName)
+    end
+  end
+  for i, playerName in ipairs(died) do
+    console.log(playerName.." died!")
+    lume.push(Dead, playerName)
+    lume.remove(Players, playerName)
+    lume.remove(Falling, playerName)
+    lume.remove(Fallers, playerName)
+    if playerName == "robot" then MonkeyLives = false end
+    Attacks[playerName] = nil
+    sprites.mutate(Hands[playerName], {visible = false})
+    sprites.mutate(playerName, {visible = false, dy=0, ddy=0, dx=0, ddx=0})
+    sounds.playRandom("Explosion")
+  end
 end
 
 function jazzHands()
@@ -313,6 +345,8 @@ end
 
 function resolveBeat(agressor, defender)
   console.log(agressor.." beat "..defender.."!")
+  Score[agressor] = Score[agressor] + 1
+  Lives[defender] = Lives[defender] - 1
   local impact = JUMP_POWER/2
   bumpBack(defender, impact)
   sounds.playRandom("Blip")
@@ -549,6 +583,24 @@ function Scenes.playing.draw()
   love.graphics.setCanvas()
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE, SCALE)
+
+  -- What are the scores George Dawes?
+  local scores = {}
+  for name, score in pairs(Score) do
+    lume.push(scores, {name, score})
+  end
+  local yOff = LINE_HEIGHT
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.print("HIGH SCORE", CONSOLE_MARGIN, yOff)
+  for i, nameAndScore in ipairs(lume.sort(scores, function(a, b) return a[2] > b[2] end)) do
+    local playerName = nameAndScore[1]
+    local score = nameAndScore[2]
+    local tag = Tag[playerName]
+    if lume.find(Dead, playerName) then tag = "†"..tag else tag = " "..tag end
+    love.graphics.setColor(Color[playerName])
+    yOff = yOff + LINE_HEIGHT
+    love.graphics.print(tag..": "..tostring(score), CONSOLE_MARGIN, yOff)
+  end
 
   -- debug things
   console.draw()
