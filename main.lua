@@ -64,18 +64,27 @@ CurScene = nil
 UIMargin = 88
 MapWidth = PIXEL_WIDTH-UIMargin
 local ph = PIXEL_HEIGHT/20
+local pw = MapWidth/5
 Platforms = {
+  {
+    x=UIMargin + pw*2, y=ph*16,
+    w=pw, h = ph
+  },
+  {
+    x=PIXEL_WIDTH-pw, y=ph*11,
+    w=pw, h=ph
+  },
+  {
+    x=UIMargin, y=ph*11,
+    w=pw, h=ph
+  },
+  {
+    x=UIMargin + pw, y=ph*6,
+    w=MapWidth - pw*2, h=ph
+  },
   {
     x=UIMargin, y=ph,
     w=MapWidth, h=ph
-  },
-  {
-    x=UIMargin, y=ph*9,
-    w=MapWidth/2, h=ph
-  },
-  {
-    x=UIMargin + MapWidth*0.75, y=ph*4,
-    w=MapWidth/5, h=ph
   }
 }
 
