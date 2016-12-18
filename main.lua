@@ -61,19 +61,21 @@ Scenes = {
 CurScene = nil
 
 -- Static things
+UIMargin = 88
+MapWidth = PIXEL_WIDTH-UIMargin
 local ph = PIXEL_HEIGHT/20
 Platforms = {
   {
-    x=0, y=ph,
-    w=PIXEL_WIDTH, h=ph
+    x=UIMargin, y=ph,
+    w=MapWidth, h=ph
   },
   {
-    x=0, y=ph*9,
-    w=PIXEL_WIDTH/2, h=ph
+    x=UIMargin, y=ph*9,
+    w=MapWidth/2, h=ph
   },
   {
-    x=PIXEL_WIDTH*0.75, y=ph*4,
-    w=PIXEL_WIDTH/5, h=ph
+    x=UIMargin + MapWidth*0.75, y=ph*4,
+    w=MapWidth/5, h=ph
   }
 }
 
@@ -374,7 +376,7 @@ function clampToScreen()
   -- Holy Leaky Abstraction Batman, how will this EVER pass review!?
   for i, spriteName in ipairs(Players) do
     local spriteInfo = sprites.get(spriteName, {"x", "width"})
-    local xOnScreen = lume.clamp(spriteInfo.x, 0, PIXEL_WIDTH-spriteInfo.width)
+    local xOnScreen = lume.clamp(spriteInfo.x, UIMargin, PIXEL_WIDTH-spriteInfo.width)
     if not (spriteInfo.x == xOnScreen) then
       sprites.mutate(spriteName, {x = xOnScreen, dx = 0, ddx = 0})
     end
@@ -580,9 +582,6 @@ function Scenes.playing.draw()
     love.graphics.rectangle("fill", p.x, displayCoord(p.y), p.w, p.h)
   end
   sprites.draw()
-  love.graphics.setCanvas()
-  love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE, SCALE)
 
   -- What are the scores George Dawes?
   local scores = {}
@@ -590,6 +589,8 @@ function Scenes.playing.draw()
     lume.push(scores, {name, score})
   end
   local yOff = LINE_HEIGHT
+  love.graphics.setColor(0x55, 0x55, 0x55)
+  love.graphics.rectangle("fill", 0, 0, UIMargin, PIXEL_HEIGHT)
   love.graphics.setColor(255, 255, 255)
   love.graphics.print("HIGH SCORE", CONSOLE_MARGIN, yOff)
   for i, nameAndScore in ipairs(lume.sort(scores, function(a, b) return a[2] > b[2] end)) do
@@ -601,6 +602,9 @@ function Scenes.playing.draw()
     yOff = yOff + LINE_HEIGHT
     love.graphics.print(tag..": "..tostring(score), CONSOLE_MARGIN, yOff)
   end
+  love.graphics.setCanvas()
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE, SCALE)
 
   -- debug things
   console.draw()
