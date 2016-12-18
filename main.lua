@@ -72,7 +72,7 @@ Platforms = {
 
 function love.load()
   love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
-  love.graphics.setFont(love.graphics.newFont(FONT_NAME, FONT_SIZE))
+  love.graphics.setFont(CONSOLE_FONT)
   
   SplashScreen = love.graphics.newImage("splash.png")
   MenuTextY = PIXEL_HEIGHT*0.8
@@ -88,7 +88,7 @@ function love.load()
     sprites.create("robot", "player")
     sprites.create("robothand", "attack")
     Hands["robot"] = "robothand"
-    sprites.mutate("robot", {x = lume.random(0, PIXEL_WIDTH)})
+    sprites.mutate("robot", {x = lume.random(0, PIXEL_WIDTH), tag = "BOT"})
     lume.push(Falling, "robot")
     lume.push(Fallers, "robot")
     lume.push(Players, "robot")
@@ -164,7 +164,7 @@ function Scenes.playing.update(dt)
       sprites.create(handName, "attack")
       local playerColor = PLAYER_COLORS[playerNo % 14 + 1]
       local playerX = lume.random(0, PIXEL_WIDTH)
-      sprites.mutate(playerName, {x = playerX, color = playerColor})
+      sprites.mutate(playerName, {x = playerX, color = playerColor, tag = "Slayer "..playerNo})
       lume.push(Players, playerName)
       Hands[playerName] = handName
       lume.push(Falling, playerName)

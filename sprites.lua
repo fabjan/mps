@@ -163,6 +163,8 @@ function sprites.update(dt)
 end
 
 function sprites.draw()
+  love.graphics.setFont(SMALL_FONT)
+  local tagHeight = SMALL_FONT:getHeight()
   for name, sprite in pairs(Sprites) do
     if sprite.visible then
       if sprite.color then
@@ -177,6 +179,11 @@ function sprites.draw()
       if sprite.flipX then flipXScale = -1 end
       if sprite.flipX then flipXOffset = sprite.width + 2*sprite.xMargin end
       animation:draw(SpriteSheets[sprite.animations.."_"..sprite.animationState], lume.round(sprite.x - sprite.xMargin + flipXOffset), displayY, 0, flipXScale, 1)
+      if sprite.tag then
+        local tagX = sprite.x + sprite.width/2 - SMALL_FONT:getWidth(sprite.tag)/2
+        local tagY = displayY - tagHeight
+        love.graphics.print(sprite.tag, tagX, tagY)
+      end
     end
   end
 end
