@@ -48,6 +48,7 @@ Scissors = {}
 Attacks = {}
 Score   = {}
 Lives   = {}
+Names   = {}
 
 -- Scenes
 Scenes = {
@@ -167,7 +168,8 @@ function Scenes.playing.update(dt)
       sprites.create(handName, "attack")
       local playerColor = PLAYER_COLORS[playerNo % 14 + 1]
       local playerX = lume.random(0, PIXEL_WIDTH)
-      sprites.mutate(playerName, {x = playerX, color = playerColor, tag = "Slayer "..playerNo})
+      sprites.mutate(playerName, {x = playerX, color = playerColor, tag = randomName()})
+      sprites.mutate(handName, {color = playerColor})
       lume.push(Players, playerName)
       Hands[playerName] = handName
       lume.push(Falling, playerName)
@@ -436,6 +438,20 @@ function scissors(spriteName)
   lume.remove(Paper, spriteName)
   lume.push(Scissors, spriteName)
   return "scissors"
+end
+
+function randomName(tries)
+  local first   = lume.randomchoice({"F", "P", "T", "G", "B", "K", "Y"})
+  local second  = lume.randomchoice({"A", "O", "U", "E", "I"})
+  local third   = lume.randomchoice({"B", "P", "T", "D", "S", "Z", "E"})
+  local newName = first..second..third
+  if not lume.find(Names, newName) then
+    return newName
+  else
+    if tries == nil then tries = 3 end
+    if tries <= 0 then return "BOB" end
+    return randomName(tries - 1)
+  end
 end
 
 function love.keypressed(key)
