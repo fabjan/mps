@@ -18,6 +18,9 @@ local sounds = require "sounds"
 -- here we go
 
 local NextLine = 0
+ShowFPS = false
+ShowBoundingBoxes = false
+ShowDebugInfo = false
 
 MonkeyLives = true  -- Number 5 is alive!
 RobotChangeTimer = 0
@@ -436,12 +439,17 @@ function scissors(spriteName)
 end
 
 function love.keypressed(key)
-	if key == "tab" then
-		console.toggle()
-	end
-	if key == "escape" then
-		selectScene("menu")
-	end
+  if key == "tab" then
+    console.toggle()
+  elseif key == "d" then
+    ShowDebugInfo = not ShowDebugInfo
+  elseif key == "f" then
+    ShowFPS = not ShowFPS
+  elseif key == "b" then
+    ShowBoundingBoxes = not ShowBoundingBoxes
+  elseif key == "escape" then
+    selectScene("menu")
+  end
 end
 
 function robotDoSomething()
@@ -462,44 +470,13 @@ function updateRobotInput()
 end
 
 function Scenes.playing.draw()
-  if console.showing() then
-    -- debug print things
+  if ShowDebugInfo or ShowBoundingBoxes then
+    love.graphics.setFont(CONSOLE_FONT)
     love.graphics.setColor(255, 255, 255)
-    love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), WINDOW_WIDTH - 100, LINE_HEIGHT)
     local xOffset
     local consoleBottom = LINE_HEIGHT * CONSOLE_LINES
     
-    for player, gamepad in controllers.enumerate() do
-      love.graphics.setColor(255, 255, 255)
-      NextLine = consoleBottom
-      xOffset = CONSOLE_MARGIN + (player - 1) * 200
-      printLine("player " .. tostring(player), xOffset)
-      xOffset = xOffset + CONSOLE_MARGIN*2
-      if (gamepad:isConnected()) then
-        for k, v in pairs(controllers.inputState(player)) do
-          printLine(k .. ": " .. tostring(v), xOffset)
-        end
-      else
-        printLine("controller not connected", xOffset)
-      end
-      local spriteName = "player"..player
-      for k, v in pairs(sprites.enumerate(spriteName)) do
-        printLine(k .. ": " .. tostring(v), xOffset)
-      end
-      local r = sprites.getRect(spriteName)
-      love.graphics.setColor(0, 255, 0)
-      love.graphics.rectangle("line", r.x*SCALE, displayCoord(r.y)*SCALE, r.w*SCALE, -r.h*SCALE)
-      local f = sprites.getFeet(spriteName)
-      love.graphics.setColor(255, 0, 255)
-      love.graphics.rectangle("line", f.x*SCALE, displayCoord(f.y)*SCALE, f.w*SCALE, -f.h*SCALE)
-      local h = sprites.getRect(Hands[spriteName], true)
-      if h then
-        love.graphics.setColor(0, 255, 255)
-        love.graphics.rectangle("line", h.x*SCALE, displayCoord(h.y)*SCALE, h.w*SCALE, -h.h*SCALE)
-      end
-    end
-    
-    if MonkeyLives then
+    if ShowDebugInfo and MonkeyLives then
       love.graphics.setColor(255, 255, 255)
       NextLine = LINE_HEIGHT * CONSOLE_LINES
       xOffset = 550
@@ -508,7 +485,41 @@ function Scenes.playing.draw()
         printLine(k .. ": " .. tostring(v), xOffset + CONSOLE_MARGIN*2)
       end
     end
-	end
+    for player, gamepad in controllers.enumerate() do
+      local spriteName = "player"..player
+      if ShowDebugInfo then
+        love.graphics.setColor(255, 255, 255)
+        NextLine = consoleBottom
+        xOffset = CONSOLE_MARGIN + (player - 1) * 200
+        printLine("player " .. tostring(player), xOffset)
+        xOffset = xOffset + CONSOLE_MARGIN*2
+        if (gamepad:isConnected()) then
+          for k, v in pairs(controllers.inputState(player)) do
+            printLine(k .. ": " .. tostring(v), xOffset)
+          end
+        else
+          printLine("controller not connected", xOffset)
+        end
+        local spriteName = "player"..player
+        for k, v in pairs(sprites.enumerate(spriteName)) do
+        printLine(k .. ": " .. tostring(v), xOffset)
+        end
+      end
+      if ShowBoundingBoxes then
+        local r = sprites.getRect(spriteName)
+        love.graphics.setColor(0, 255, 0)
+        love.graphics.rectangle("line", r.x*SCALE, displayCoord(r.y)*SCALE, r.w*SCALE, -r.h*SCALE)
+        local f = sprites.getFeet(spriteName)
+        love.graphics.setColor(255, 0, 255)
+        love.graphics.rectangle("line", f.x*SCALE, displayCoord(f.y)*SCALE, f.w*SCALE, -f.h*SCALE)
+        local h = sprites.getRect(Hands[spriteName], true)
+        if h then
+          love.graphics.setColor(0, 255, 255)
+          love.graphics.rectangle("line", h.x*SCALE, displayCoord(h.y)*SCALE, h.w*SCALE, -h.h*SCALE)
+        end
+      end
+    end
+  end
   
   love.graphics.setCanvas(LowrezCanvas)
   love.graphics.clear()
@@ -520,7 +531,14 @@ function Scenes.playing.draw()
   love.graphics.setCanvas()
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE, SCALE)
-	console.draw()
+
+  -- debug things
+  console.draw()
+  if ShowFPS then
+    love.graphics.setFont(CONSOLE_FONT)
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), WINDOW_WIDTH - 100, LINE_HEIGHT)
+  end
 end
 
 function printLine(s, x, startAt)

@@ -36,7 +36,7 @@ function console.draw()
 	love.graphics.rectangle("fill",	CONSOLE_MARGIN, 0, width, lines*LINE_HEIGHT)
   love.graphics.setColor(255, 255, 255, 200)
 	for i, line in ipairs(ConsoleBuffer) do
-		love.graphics.print(line, CONSOLE_MARGIN*2, (i - 1)*LINE_HEIGHT)
+		love.graphics.print(line, CONSOLE_MARGIN*2, i*LINE_HEIGHT)
 	end
 end
 

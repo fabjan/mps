@@ -6,11 +6,10 @@ PIXEL_HEIGHT = 200
 WINDOW_WIDTH  = PIXEL_WIDTH * SCALE
 WINDOW_HEIGHT = PIXEL_HEIGHT * SCALE
 
-FONT_SIZE    = 14
+FONT_SIZE    = 8
 LINE_HEIGHT  = FONT_SIZE + 2
-FONT_NAME    = "MonospaceTypewriter.ttf"
-CONSOLE_FONT = love.graphics.newFont(FONT_NAME, FONT_SIZE)
-SMALL_FONT   = love.graphics.newFont(FONT_NAME, FONT_SIZE*0.8)
+SMALL_FONT   = love.graphics.newFont("PressStart2P.ttf", FONT_SIZE)
+CONSOLE_FONT = love.graphics.newFont("PressStart2P.ttf", FONT_SIZE)
 
 CONSOLE_LINES = 5
 CONSOLE_MARGIN = 4
