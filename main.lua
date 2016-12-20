@@ -25,6 +25,8 @@ RobotChangeTimer = 0
 RobotChangeDelay = 0.2  -- seconds
 RobotInputMap = {}
 
+NameChoices = require "usr_share_dict_words"
+
 -- Some rules
 Beats = {
   rock     = { scissors = true },
@@ -486,10 +488,7 @@ function scissors(spriteName)
 end
 
 function randomName(tries)
-  local first   = lume.randomchoice({"P", "T", "G", "B", "K", "J"})
-  local second  = lume.randomchoice({"A", "O", "U", "E", "I"})
-  local third   = lume.randomchoice({"B", "P", "T", "D", "S", "Z", "E", "F"})
-  local newName = first..second..third
+  local newName = string.upper(lume.randomchoice(NameChoices))
   if not lume.find(Names, newName) then
     return newName
   else
