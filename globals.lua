@@ -9,7 +9,8 @@ WINDOW_HEIGHT = PIXEL_HEIGHT * SCALE
 FONT_SIZE    = 8
 LINE_HEIGHT  = FONT_SIZE + 2
 SMALL_FONT   = love.graphics.newFont("PressStart2P.ttf", FONT_SIZE)
-CONSOLE_FONT = love.graphics.newFont("PressStart2P.ttf", FONT_SIZE)
+BIG_FONT     = love.graphics.newFont("PressStart2P.ttf", FONT_SIZE*2)
+CONSOLE_FONT = BIG_FONT
 
 CONSOLE_LINES = 5
 CONSOLE_MARGIN = 4

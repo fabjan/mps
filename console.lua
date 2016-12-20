@@ -33,10 +33,11 @@ function console.draw()
 	local width = love.graphics.getWidth() - CONSOLE_MARGIN*2
 
 	love.graphics.setColor(20, 20, 20, 200)
-	love.graphics.rectangle("fill",	CONSOLE_MARGIN, 0, width, lines*LINE_HEIGHT)
+	love.graphics.rectangle("fill",	CONSOLE_MARGIN, 0, width, lines*LINE_HEIGHT*2 + CONSOLE_MARGIN*2)
   love.graphics.setColor(255, 255, 255, 200)
+  love.graphics.setFont(CONSOLE_FONT)
 	for i, line in ipairs(ConsoleBuffer) do
-		love.graphics.print(line, CONSOLE_MARGIN*2, i*LINE_HEIGHT)
+		love.graphics.print(line, CONSOLE_MARGIN*2, (i-1)*LINE_HEIGHT*2+CONSOLE_MARGIN*2)
 	end
 end
 
