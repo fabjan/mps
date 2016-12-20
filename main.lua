@@ -26,6 +26,7 @@ RobotChangeDelay = 0.2  -- seconds
 RobotInputMap = {}
 
 NameChoices = require "usr_share_dict_words"
+ColorChoices = lume.shuffle(PLAYER_COLORS)
 
 -- Some rules
 Beats = {
@@ -33,25 +34,6 @@ Beats = {
   paper    = { rock     = true },
   scissors = { paper    = true }
 }
-
--- Sprite collections
-Players  = {}
-Hands    = {}
-Falling  = {}
-Hanging  = {}
-Fallers  = {}
-Rock     = {}
-Paper    = {}
-Scissors = {}
-Dead     = {}
-
--- Other tracking
-Attacks = {}
-Score   = {}
-Lives   = {}
-Names   = {}
-Tag     = {}
-Color   = {}
 
 -- Scenes
 Scenes = {
@@ -129,12 +111,12 @@ function selectScene(newName)
   local newScene = Scenes[newName]
   CurScene = newName
   
-  love.update = newScene.update
-  love.draw   = newScene.draw
-  
   if not (newScene.init == nil) then
     newScene.init()
   end
+  
+  love.update = newScene.update
+  love.draw   = newScene.draw
 end
 
 function Scenes.menu.init()
@@ -147,6 +129,28 @@ end
 
 
 function Scenes.playing.init()
+  -- Sprite collections
+  Players  = {}
+  Hands    = {}
+  Falling  = {}
+  Hanging  = {}
+  Fallers  = {}
+  Rock     = {}
+  Paper    = {}
+  Scissors = {}
+  Dead     = {}
+
+  -- Other tracking
+  Attacks = {}
+  Score   = {}
+  Lives   = {}
+  Names   = {}
+  Tag     = {}
+  Color   = {}
+  Winner  = "NOBODY"
+
+  ColorChoices = lume.shuffle(PLAYER_COLORS)
+  
   sounds.play("song1", true)
 end
 
@@ -185,7 +189,7 @@ function Scenes.playing.update(dt)
     if not lume.find(Players, playerName) then
       sprites.create(playerName, "player")
       sprites.create(handName, "attack")
-      local playerColor = lume.randomchoice(PLAYER_COLORS) --[playerNo % 14 + 1]
+      local playerColor = ColorChoices[playerNo % 14 + 1]
       local playerTag = randomName()
       local playerX = lume.random(0, PIXEL_WIDTH)
       sprites.mutate(playerName, {x = playerX, color = playerColor, tag = playerTag})
