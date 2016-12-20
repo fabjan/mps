@@ -38,7 +38,8 @@ Beats = {
 -- Scenes
 Scenes = {
   menu = {},
-  playing = {}
+  playing = {},
+  winning = {}
 }
 CurScene = nil
 
@@ -76,6 +77,7 @@ function love.load()
   love.graphics.setFont(CONSOLE_FONT)
   
   SplashScreen = love.graphics.newImage("splash.png")
+  WinScreen = love.graphics.newImage("win.png")
   MenuTextY = PIXEL_HEIGHT*0.8
   
   -- setup modules
@@ -163,15 +165,40 @@ function Scenes.menu.update(dt)
   if love.keyboard.isDown("space") then
     selectScene("playing")
   end
-  netgamepads.update(dt)
 end
 
 function Scenes.menu.draw()
+  local menuText = "PRESS THE ANY KEY"
+  local menuFont = BIG_FONT
+  local menuTextX = PIXEL_WIDTH/2-menuFont:getWidth(menuText)/2
+  love.graphics.setFont(menuFont)
   love.graphics.setCanvas(LowrezCanvas)
   love.graphics.clear()
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(SplashScreen)
-  love.graphics.print("PRESS SPACE", PIXEL_WIDTH/2-40, MenuTextY)
+  love.graphics.print(menuText, menuTextX, MenuTextY)
+  love.graphics.setCanvas()
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE, SCALE)
+end
+
+function Scenes.winning.init()
+  sounds.play("song0", true)
+end
+
+function Scenes.winning.update(dt)
+  WinningTextY = PIXEL_HEIGHT*0.2+math.sin(love.timer.getTime()*2)*5
+end
+
+function Scenes.winning.draw()
+  local winningFont = BIG_FONT
+  local winningTextX = PIXEL_WIDTH/2 - BIG_FONT:getWidth(Winner)
+  love.graphics.setFont(winningFont)
+  love.graphics.setCanvas(LowrezCanvas)
+  love.graphics.clear()
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(WinScreen)
+  love.graphics.print(Winner, winningTextX, WinningTextY)
   love.graphics.setCanvas()
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE, SCALE)
@@ -253,6 +280,10 @@ function killAllDeadPlayers()
     sprites.mutate(Hands[playerName], {visible = false})
     sprites.mutate(playerName, {visible = false, dy=0, ddy=0, dx=0, ddx=0})
     sounds.playRandom("Explosion")
+  end
+  if table.getn(Players) == 1 and table.getn(Dead) > 0 then
+    Winner = Tag[Players[1]]
+    selectScene("winning")
   end
 end
 
