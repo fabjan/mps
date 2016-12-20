@@ -365,11 +365,11 @@ function resolveFights(dt)
         if not toRemove[agressor] then toRemove[agressor] = {} end
         toRemove[agressor][defender] = true
         local attackA = attack.attackType
-        local attackB = ((Attacks[defender] or {})[agressor] or {}).attackType
-        if attackA == attackB then
+        local attackD = ((Attacks[defender] or {})[agressor] or {}).attackType
+        if attackA == attackD then
           resolveDraw(agressor, defender)
-        elseif Beats[attackA][attackB] then
-          resolveBeat(agressor, defender) 
+        elseif attackD == nil or Beats[attackA][attackD] then
+          resolveBeat(agressor, defender)
         end
       end
     end
