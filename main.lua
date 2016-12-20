@@ -213,7 +213,7 @@ function Scenes.playing.update(dt)
     local inputState = controllers.inputState(playerNo)
     local playerName = "player"..playerNo
     local handName = "hand"..playerNo
-    if not lume.find(Players, playerName) then
+    if not lume.find(Players, playerName) and not lume.find(Dead, playerName) then
       sprites.create(playerName, "player")
       sprites.create(handName, "attack")
       local playerColor = ColorChoices[playerNo % 14 + 1]
