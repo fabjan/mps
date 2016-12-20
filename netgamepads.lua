@@ -1,4 +1,4 @@
-local bit = bit32 or require "lib.bit"
+local bit = bit32 or require "bit"
 
 local net = require "net"
 

@@ -1,6 +1,6 @@
 local socket = require "socket"
 
-local lume   = require "lib.lume"
+local lume   = require "lume"
 
 local console = require "console"
 
