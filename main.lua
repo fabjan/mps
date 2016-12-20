@@ -1,5 +1,3 @@
-package.path = package.path .. ';lib/?.lua'
-
 require "globals"
 
 -- some libs

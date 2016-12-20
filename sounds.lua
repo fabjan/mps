@@ -1,6 +1,6 @@
-local console = require "console"
-
 local sfxr = require "sfxr"
+
+local console = require "console"
 
 local sounds = {}
 
