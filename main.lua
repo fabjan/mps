@@ -192,7 +192,7 @@ end
 
 function Scenes.winning.draw()
   local winningFont = BIG_FONT
-  local winningTextX = PIXEL_WIDTH/2 - BIG_FONT:getWidth(Winner)
+  local winningTextX = PIXEL_WIDTH/2 - BIG_FONT:getWidth(Winner)/2
   love.graphics.setFont(winningFont)
   love.graphics.setCanvas(LowrezCanvas)
   love.graphics.clear()
@@ -292,7 +292,7 @@ function jazzHands()
     local handName = Hands[playerName]
     local playerInfo = sprites.get(playerName, {"x", "y", "flipX", "width", "height", "xMargin"})
     local newFlipX = playerInfo.flipX
-    local xOffset = playerInfo.width   * 1.1
+    local xOffset = playerInfo.width   * 0.9
     local yOffset = playerInfo.height  * 0.46
     if newFlipX then xOffset = -xOffset end
     local newX = playerInfo.x + playerInfo.xMargin/4 + xOffset  -- /4 ought to be enough for anyone
