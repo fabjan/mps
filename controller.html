@@ -1,7 +1,14 @@
 <html>
 <head>
-<link rel="stylesheet" href="http://cdn.jsdelivr.net/g/pure@0.6.1(base-min.css+grids-min.css+buttons-min.css)">
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="pure.css">
 <style>
+#gamepad table button {
+  width: 100%;
+  height: 120%;
+}
 </style>
 <script>
 var DPAD = ["dpleft", "dpright", "dpup", "dpdown"];
@@ -10,8 +17,12 @@ var INPUTS = DPAD.concat(BUTTONS);
 
 var inputState = 0;
 
+function stopIt(e) {
+  e.preventDefault()
+}
+
 function valueFor(buttonName) {
-  return 2 ** INPUTS.indexOf(buttonName);
+  return Math.pow(2, INPUTS.indexOf(buttonName));
 }
 
 function press(buttonName) {
@@ -23,29 +34,50 @@ function release(buttonName) {
 }
 
 function send() {
-  console.log(inputState);
+  console.log("sending input", inputState);
+  document.getElementById("messages").innerText = inputState;
 }
 
 window.onload = function() {
-  var pad = document.getElementById("gamepad");
+  window.ontouchmove = window.ontouchstart = stopIt;
 
-  INPUTS.forEach(function(name) {
-    var element = document.createElement("button");
-    element.setAttribute("class", "pure-button");
-    element.setAttribute("id", name);
-    element.innerText = name;
-	element.ontouchstart = function() {
-	  press(name);
-	  send();
-	};
-	element.ontouchend = function() {
-	  release(name);
-	  send();
-	};
-    pad.appendChild(element);
+  INPUTS.forEach(function(elementId) {
+    var element = document.getElementById(elementId);
+    if (!element) return;
+    element.onmousedown = element.ontouchstart = function() {
+      press(elementId);
+      send();
+    };
+    element.onmouseup = element.ontouchend = function() {
+      release(elementId);
+      send();
+    };
   });
 }
 </script>
 </head>
 <body>
-<div id="gamepad"/>
+<form class="pure-form">
+  <fieldset>
+     <input type="host" placeholder="Hostname">
+     <input type="port" placeholder="Port">
+     <button type="submit" class="pure-button pure-button-primary">Connect</button>
+     <label id="messages">-</label>
+  </fieldset>
+</form>
+<div id="gamepad">
+  <table id="dpad" width="49%" height="50%" style="display: inline">
+    <tr><td/><td><button class="pure-button" id="dpup">^</button></td></tr>
+    <tr><td><button class="pure-button" id="dpleft">&lt;-</button></td>
+        <td/>
+        <td><button class="pure-button" id="dpright">-&gt;</button></td></tr>
+    <tr><td/><td><button class="pure-button" id="dpdown">v</button></td></tr>
+  </table>
+  <table id="buttons" width="49%" height="50%" style="display: inline">
+    <tr><td/><td><button class="pure-button" id="y">Y</button></td></tr>
+    <tr><td><button class="full pure-button" id="x">X</button></td>
+        <td/>
+        <td><button class="pure-button" id="b">B</button></td></tr>
+    <tr><td/><td><button class="pure-button" id="a">A</button></td></tr>
+  </table>
+</div>
