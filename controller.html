@@ -7,7 +7,7 @@
 <style>
 #gamepad table button {
   width: 100%;
-  height: 120%;
+  height: 150%;
 }
 </style>
 <script>
@@ -16,9 +16,16 @@ var BUTTONS = ["a", "b", "x", "y"];
 var INPUTS = DPAD.concat(BUTTONS);
 
 var inputState = 0;
+var socket;
 
 function stopIt(e) {
   e.preventDefault()
+}
+
+function connect(host, port) {
+  socket = new WebSocket("ws://" + host + ":" + port);
+  document.getElementById("gamepad").style.display = "block";
+  document.getElementById("connectForm").style.display = "none";
 }
 
 function valueFor(buttonName) {
@@ -36,10 +43,17 @@ function release(buttonName) {
 function send() {
   console.log("sending input", inputState);
   document.getElementById("messages").innerText = inputState;
+  if (socket && socket.readyState == WebSocket.OPEN) {
+    socket.send(""+inputState+"\n");
+  } else {
+    console.info("not connected to server, state: ", socket && socket.readyState);
+  }
 }
 
 window.onload = function() {
-  window.ontouchmove = window.ontouchstart = stopIt;
+  var gamepad = document.getElementById("gamepad");
+  gamepad.style.display = "none";
+  gamepad.ontouchmove = gamepad.ontouchstart = stopIt;
 
   INPUTS.forEach(function(elementId) {
     var element = document.getElementById(elementId);
@@ -53,27 +67,37 @@ window.onload = function() {
       send();
     };
   });
+
+  var connectButton = document.getElementById("connect");
+  var hostField = document.getElementById("hostInput");
+  var portField = document.getElementById("portInput");
+  connectButton.onclick = function(e) {
+    e.preventDefault();
+    connect(hostField.value, portField.value);
+  };
 }
 </script>
 </head>
 <body>
-<form class="pure-form">
+<form id="connectForm" class="pure-form pure-form-stacked">
   <fieldset>
-     <input type="host" placeholder="Hostname">
-     <input type="port" placeholder="Port">
-     <button type="submit" class="pure-button pure-button-primary">Connect</button>
+     <label for="hostInput">Host</label>
+     <input id="hostInput" placeholder="127.0.0.1" type="number">
+     <label for="portInput">Port</label>
+     <input id="portInput" placeholder="8787" type="number">
+     <button class="pure-button pure-button-primary" id="connect">Connect</button>
      <label id="messages">-</label>
   </fieldset>
 </form>
 <div id="gamepad">
-  <table id="dpad" width="49%" height="50%" style="display: inline">
+  <table id="dpad" width="49%" height="100%" style="display: inline">
     <tr><td/><td><button class="pure-button" id="dpup">^</button></td></tr>
     <tr><td><button class="pure-button" id="dpleft">&lt;-</button></td>
         <td/>
         <td><button class="pure-button" id="dpright">-&gt;</button></td></tr>
     <tr><td/><td><button class="pure-button" id="dpdown">v</button></td></tr>
   </table>
-  <table id="buttons" width="49%" height="50%" style="display: inline">
+  <table id="buttons" width="49%" height="100%" style="display: inline">
     <tr><td/><td><button class="pure-button" id="y">Y</button></td></tr>
     <tr><td><button class="full pure-button" id="x">X</button></td>
         <td/>
