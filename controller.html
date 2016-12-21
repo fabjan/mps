@@ -1,0 +1,51 @@
+<html>
+<head>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/g/pure@0.6.1(base-min.css+grids-min.css+buttons-min.css)">
+<style>
+</style>
+<script>
+var DPAD = ["dpleft", "dpright", "dpup", "dpdown"];
+var BUTTONS = ["a", "b", "x", "y"];
+var INPUTS = DPAD.concat(BUTTONS);
+
+var inputState = 0;
+
+function valueFor(buttonName) {
+  return 2 ** INPUTS.indexOf(buttonName);
+}
+
+function press(buttonName) {
+  inputState = inputState | valueFor(buttonName);
+}
+
+function release(buttonName) {
+  inputState = inputState ^ valueFor(buttonName);
+}
+
+function send() {
+  console.log(inputState);
+}
+
+window.onload = function() {
+  var pad = document.getElementById("gamepad");
+
+  INPUTS.forEach(function(name) {
+    var element = document.createElement("button");
+    element.setAttribute("class", "pure-button");
+    element.setAttribute("id", name);
+    element.innerText = name;
+	element.ontouchstart = function() {
+	  press(name);
+	  send();
+	};
+	element.ontouchend = function() {
+	  release(name);
+	  send();
+	};
+    pad.appendChild(element);
+  });
+}
+</script>
+</head>
+<body>
+<div id="gamepad"/>
