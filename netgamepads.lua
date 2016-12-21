@@ -7,7 +7,7 @@ NetGamepads = {}
 NetButtons = {"dpleft", "dpright", "dpup", "dpdown", "a", "b", "x", "y"}
 
 function connectNetGamepad(client)
-  local joystickName = "virtual net controller ("..client:getpeername()..")"
+  local joystickName = "virtual net controller ("..tostring(client:getpeername())..")"
   local inputs = {}
   local fakeJoystick = {
     states        = {},
