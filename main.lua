@@ -386,7 +386,7 @@ function resolveDraw(agressor, defender)
   local impact = JUMP_POWER/3
   bumpBack(agressor, impact)
   bumpBack(defender, impact)
-  sounds.playRandom("Hit")
+  sounds.playRandom("Hit", 0.5)
 end
 
 function resolveBeat(agressor, defender)
@@ -435,7 +435,7 @@ function clampToScreen()
 end
 
 function land(spriteName)
-  sounds.playRandom("Hit")
+  sounds.playRandom("Hit", 0.2)
   sprites.mutate(spriteName, {dy = 0, ddy = 0, animationState = "idle"})
   lume.remove(Falling, spriteName)
 end
@@ -447,7 +447,7 @@ function actOnInput(spriteName, inputState)
 
   -- jumping
   if inputState.jump == "pressed" and not isFalling then
-    sounds.playRandom("Jump")
+    sounds.playRandom("Jump", 0.2)
     sprites.mutate(spriteName, {dy = JUMP_POWER, animationState = "jumping"})
     lume.push(Falling, spriteName)
   end

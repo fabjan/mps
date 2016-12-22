@@ -42,11 +42,14 @@ function sounds.stop(soundName)
   sound:stop()
 end
 
-function sounds.playRandom(soundType)
+function sounds.playRandom(soundType, volume)
+  volume = colume or 1
   local sfx = sfxr.newSound()
   sfx["random"..soundType](sfx)
   local soundData = sfx:generateSoundData()
-  love.audio.newSource(soundData):play()
+  local src = love.audio.newSource(soundData)
+  src:setVolume(volume)
+  src:play()
 end
 
 return sounds
