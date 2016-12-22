@@ -4,6 +4,7 @@ local lume = require "lume"
 
 local ConsoleBuffer = {}
 local ShowConsole = false
+local LinesLogged = 0
 
 console = {}
 
@@ -21,7 +22,8 @@ function console.log(...)
 	for i,v in ipairs(lines) do
 		line = line .. tostring(v) .. "\t"
 	end
-	lume.push(ConsoleBuffer, line)
+	LinesLogged = LinesLogged + 1
+	lume.push(ConsoleBuffer, tostring(LinesLogged).." - "..line)
 	if (#ConsoleBuffer > CONSOLE_LINES) then
 		ConsoleBuffer = lume.slice(ConsoleBuffer, 2, CONSOLE_LINES + 2)
 	end
