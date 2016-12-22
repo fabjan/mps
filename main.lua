@@ -10,6 +10,7 @@ local console = require "console"
 local reloader = require "hot_reloading"
 local controllers = require "controllers"
 local netgamepads = require "netgamepads"
+local httpd = require "httpd"
 local sprites = require "sprites"
 local sounds = require "sounds"
 
@@ -85,6 +86,7 @@ function love.load()
   sprites.load()
   sounds.load()
   netgamepads.load()
+  httpd.load()
   
   -- setup internals
   if MonkeyLives then
@@ -207,6 +209,7 @@ end
 function Scenes.playing.update(dt)
   reloader.update(dt)
   netgamepads.update(dt)
+  httpd.update(dt)
   controllers.update(dt)
   
   for playerNo, gamepad in controllers.enumerate() do
