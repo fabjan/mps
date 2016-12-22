@@ -441,6 +441,7 @@ function land(spriteName)
 end
 
 function actOnInput(spriteName, inputState)
+  if lume.find(Dead, spriteName) then return end
   local isFalling = lume.find(Falling, spriteName)
   local spriteInfo = sprites.get(spriteName, {"dx", "ddx", "dy"})
 
