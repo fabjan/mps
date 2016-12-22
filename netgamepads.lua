@@ -48,10 +48,11 @@ end
 local netgamepads = {}
 
 function netgamepads.load()
-  net.listen({
+  local sock = net.listen({
     onAccept  = connectNetGamepad,
     onReceive = updateNetGamepad
   })
+  console.log("listening for controller connections on "..sock.ip..":"..sock.port)
 end
 
 function netgamepads.update(dt)

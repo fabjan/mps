@@ -25,12 +25,11 @@ function net.listen(callbacks, port, address)
   if not address then address = "0.0.0.0" end
   local server, errMsg = socket.bind(address, port)
   if server then
-    console.log("listening for controllers on "..address..":"..port)
     server:settimeout(AcceptTimeout)
     Callbacks[server] = callbacks
     lume.push(Servers, server)
     return {
-      address = address,
+      ip = socket.dns.toip(socket.dns.gethostname()),
       port = port
     }
   elseif errMsg then
