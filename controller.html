@@ -23,7 +23,7 @@ function stopIt(e) {
 }
 
 function connect(host, port) {
-  socket = new WebSocket("ws://" + host + ":" + port);
+  socket = new WebSocket("ws://" + host + ":" + port + "/");
   document.getElementById("gamepad").style.display = "block";
   document.getElementById("connectForm").style.display = "none";
 }
@@ -82,9 +82,9 @@ window.onload = function() {
 <form id="connectForm" class="pure-form pure-form-stacked">
   <fieldset>
      <label for="hostInput">Host</label>
-     <input id="hostInput" placeholder="127.0.0.1" type="number">
+     <input id="hostInput" value="mbair2011.local" />
      <label for="portInput">Port</label>
-     <input id="portInput" placeholder="8787" type="number">
+     <input id="portInput" type="number" value="8787" />
      <button class="pure-button pure-button-primary" id="connect">Connect</button>
      <label id="messages">-</label>
   </fieldset>
