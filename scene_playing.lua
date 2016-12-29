@@ -64,8 +64,6 @@ function playing.init()
   Tag     = {}
   Color   = {}
   Winner  = "NOBODY"
-
-  ColorChoices = lume.shuffle(PLAYER_COLORS)
   
   NextLine = 0
 
@@ -128,7 +126,7 @@ function spawnPlayer(playerNo, playerName, handName, playerTag)
   sprites.create(handName, "attack")
   playerTag = playerTag or randomName()
   
-  local playerColor = ColorChoices[stringHash(playerTag) % (#ColorChoices) + 1]
+  local playerColor = stringColor(playerTag)
   local playerX = lume.random(0, PIXEL_WIDTH)
   sprites.mutate(playerName, {x = playerX, color = playerColor, tag = playerTag})
   sprites.mutate(handName, {color = playerColor})
@@ -468,9 +466,10 @@ function playing.draw()
   end
   
   love.graphics.clear()
-  love.graphics.setColor(255, 255, 255)
+  
   for i, p in ipairs(Platforms) do
-    love.graphics.rectangle("fill", p.x, displayCoord(p.y), p.w, p.h)
+    love.graphics.setColor(0xAA, 0xAA, 0xAA)
+    love.graphics.rectangle("fill", p.x, displayCoord(p.y), p.w, 2)
   end
   sprites.draw()
 

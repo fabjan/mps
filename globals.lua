@@ -31,7 +31,8 @@ GROUND_DRAG     = 0.8
 ATTACK_DURATION = 0.1
 LIVES           = 5
 
-PLAYER_COLORS = {     -- standard CGA colors, without black
+COLOR_PALETTE = {     -- standard CGA colors
+  {0x00, 0x00, 0x00}, --black
   {0x00, 0x00, 0xAA},
   {0x55, 0x55, 0xFF},
   {0x00, 0xAA, 0x00},
@@ -61,4 +62,8 @@ function stringHash(s)
     radix = radix * 10
   end
   return hash
+end
+
+function stringColor(s)
+  return COLOR_PALETTE[stringHash(s) % (#COLOR_PALETTE) + 1 + 1] -- avoid black, as it's the background color
 end
