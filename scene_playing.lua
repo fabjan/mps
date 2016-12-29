@@ -126,8 +126,9 @@ end
 function spawnPlayer(playerNo, playerName, handName, playerTag)
   sprites.create(playerName, "player")
   sprites.create(handName, "attack")
-  local playerColor = ColorChoices[playerNo % 14 + 1]
   playerTag = playerTag or randomName()
+  
+  local playerColor = ColorChoices[stringHash(playerTag) % (#ColorChoices) + 1]
   local playerX = lume.random(0, PIXEL_WIDTH)
   sprites.mutate(playerName, {x = playerX, color = playerColor, tag = playerTag})
   sprites.mutate(handName, {color = playerColor})
