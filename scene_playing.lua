@@ -167,11 +167,12 @@ function jazzHands()
   for i, playerName in ipairs(Players) do
     local handName = Hands[playerName]
     local playerInfo = sprites.get(playerName, {"x", "y", "flipX", "width", "height", "xMargin"})
+    local handWidth = sprites.get(handName, "width")
     local newFlipX = playerInfo.flipX
-    local xOffset = playerInfo.width   * 0.9
+    local xOffset = playerInfo.width + 4
     local yOffset = playerInfo.height  * 0.46
-    if newFlipX then xOffset = -xOffset end
-    local newX = playerInfo.x + playerInfo.xMargin/4 + xOffset  -- /4 ought to be enough for anyone
+    if newFlipX then xOffset = -handWidth - 4 end
+    local newX = playerInfo.x + xOffset
     local newY = playerInfo.y + yOffset
     sprites.mutate(handName, {x = newX, y = newY, flipX = newFlipX})
   end
