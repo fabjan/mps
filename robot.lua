@@ -21,9 +21,9 @@ end
 function robotDoSomething()
   local buttons = {
     --"jump",
-    --"rock",
-    "paper"
-    --"scissors",
+    "rock",
+    "paper",
+    "scissors"
     --"left",
     --"right"
   }
