@@ -23,7 +23,7 @@ end
 function winning.draw()
   love.graphics.setFont(WINNING_FONT)
   love.graphics.clear()
-  love.graphics.setColor(255, 255, 255)
+  love.graphics.setColor(stringColor(Winner))
   love.graphics.draw(WinScreen)
   love.graphics.print(WinningText, WinningTextX, WINNING_TEXT_Y)
 end
