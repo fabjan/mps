@@ -13,6 +13,8 @@ function winning.init()
   sounds.play("song0", true)
   WinningText = Winner .. " HAS WON"
   WinningTextWidth = WINNING_FONT:getWidth(WinningText)
+  WinningTextHeight = WINNING_FONT:getHeight(WinningText)
+  WinningTextX = WINNING_TEXT_XCENTER - WinningTextWidth/2
 end
 
 function winning.update(dt)
@@ -23,8 +25,11 @@ end
 function winning.draw()
   love.graphics.setFont(WINNING_FONT)
   love.graphics.clear()
-  love.graphics.setColor(stringColor(Winner))
+  love.graphics.setColor(0xFF, 0xFF, 0xFF)
   love.graphics.draw(WinScreen)
+  love.graphics.setColor(0x00, 0x00, 0x00)
+  love.graphics.rectangle("fill", WinningTextX-2, WINNING_TEXT_Y-5, WinningTextWidth+2, WinningTextHeight+2)
+  love.graphics.setColor(stringColor(Winner))
   love.graphics.print(WinningText, WinningTextX, WINNING_TEXT_Y)
 end
 
