@@ -4,6 +4,7 @@ local console     = require "console"
 local controllers = require "controllers"
 local sprites     = require "sprites"
 local sounds      = require "sounds"
+local robot       = require "robot"
 
 NAME_CHOICES = require "usr_share_dict_words"
 
@@ -69,13 +70,10 @@ function playing.init()
   NextLine = 0
 
   -- setup monkey business
-  
   MonkeyLives = true  -- Number 5 is alive!
-  RobotChangeTimer = 0
-  RobotChangeDelay = 0.2  -- seconds
-  RobotInputMap = {}
-  
+
   if MonkeyLives then
+    robot.init()
     sprites.create("robot", "player")
     sprites.create("robothand", "attack")
     Hands["robot"] = "robothand"
@@ -125,13 +123,8 @@ function playing.update(dt)
   end
   
   if MonkeyLives then  -- debugging buddy
-    RobotChangeTimer = RobotChangeTimer + dt
-    if RobotChangeTimer > RobotChangeDelay then
-      RobotChangeTimer = 0
-      robotDoSomething()
-    end
-    actOnInput("robot", RobotInputMap)
-    updateRobotInput()
+    local robotInput = robot.update(dt)
+    actOnInput("robot", robotInput)
   end
   
   for i, spriteName in ipairs(Falling) do
@@ -420,23 +413,6 @@ function randomName(tries)
     if tries <= 0 then return "BOB" end
     return randomName(tries - 1)
   end
-end
-
-function robotDoSomething()
-  local buttons = {
-    --"jump",
-    --"rock",
-    "paper"
-    --"scissors",
-    --"left",
-    --"right"
-  }
-  local actions = {"pressed", "released"}
-  RobotInputMap[lume.randomchoice(buttons)] = lume.randomchoice(actions)
-end
-
-function updateRobotInput()
-  RobotInputMap["jump"] = nil
 end
 
 function playing.draw()
