@@ -74,17 +74,7 @@ function playing.init()
 
   if MonkeyLives then
     robot.init()
-    sprites.create("robot", "player")
-    sprites.create("robothand", "attack")
-    Hands["robot"] = "robothand"
-    Lives["robot"] = 5
-    Score["robot"] = 0
-    Tag["robot"]   = "BOT"
-    Color["robot"] = { 0xFF, 0xFF, 0xFF }
-    sprites.mutate("robot", {x = lume.random(0, PIXEL_WIDTH), tag = "BOT"})
-    lume.push(Falling, "robot")
-    lume.push(Fallers, "robot")
-    lume.push(Players, "robot")
+    spawnPlayer(-1, "robot", "robotHand")
   end
   
   sounds.play("song1", true)
@@ -102,24 +92,10 @@ function playing.update(dt)
     local playerName = "player"..playerNo
     local handName = "hand"..playerNo
     if not lume.find(Players, playerName) and not lume.find(Dead, playerName) then
-      sprites.create(playerName, "player")
-      sprites.create(handName, "attack")
-      local playerColor = ColorChoices[playerNo % 14 + 1]
-      local playerTag = randomName()
-      local playerX = lume.random(0, PIXEL_WIDTH)
-      sprites.mutate(playerName, {x = playerX, color = playerColor, tag = playerTag})
-      sprites.mutate(handName, {color = playerColor})
-      lume.push(Players, playerName)
-      lume.push(Falling, playerName)
-      lume.push(Fallers, playerName)
-      Hands[playerName] = handName
-      Score[playerName] = 0
-      Lives[playerName] = LIVES
-      Tag[playerName]   = playerTag
-      Color[playerName] = playerColor
-      console.log("player "..playerNo.." spawned!")
+      spawnPlayer(playerNo, playerName, handName)
+    else
+      actOnInput(playerName, inputState)
     end
-    actOnInput(playerName, inputState)
   end
   
   if MonkeyLives then  -- debugging buddy
@@ -145,6 +121,25 @@ function playing.update(dt)
     Winner = Tag[Players[1]]
     return "winning"
   end
+end
+
+function spawnPlayer(playerNo, playerName, handName, playerTag)
+  sprites.create(playerName, "player")
+  sprites.create(handName, "attack")
+  local playerColor = ColorChoices[playerNo % 14 + 1]
+  playerTag = playerTag or randomName()
+  local playerX = lume.random(0, PIXEL_WIDTH)
+  sprites.mutate(playerName, {x = playerX, color = playerColor, tag = playerTag})
+  sprites.mutate(handName, {color = playerColor})
+  lume.push(Players, playerName)
+  lume.push(Falling, playerName)
+  lume.push(Fallers, playerName)
+  Hands[playerName] = handName
+  Score[playerName] = 0
+  Lives[playerName] = LIVES
+  Tag[playerName]   = playerTag
+  Color[playerName] = playerColor
+  console.log(playerName.." spawned!")
 end
 
 function killAllDeadPlayers()
