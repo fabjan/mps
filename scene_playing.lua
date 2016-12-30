@@ -357,6 +357,13 @@ function actOnInput(spriteName, inputState)
     end
   end
   
+  local newSpriteInfo = sprites.get(spriteName, {"dx", "ddx", "dy"})
+  if newSpriteInfo.dx < -RUNNING_MAX then
+    sprites.mutate(spriteName, {ddx = 0,  dx = -RUNNING_MAX})
+  elseif newSpriteInfo.dx > RUNNING_MAX then
+    sprites.mutate(spriteName, {ddx = 0,  dx = RUNNING_MAX})
+  end
+  
   -- attacking
   local attackName
   if inputState.rock == "pressed" then
