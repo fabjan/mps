@@ -451,14 +451,14 @@ function playing.draw()
       if ShowBoundingBoxes then
         local r = sprites.getRect(spriteName)
         love.graphics.setColor(0, 255, 0)
-        love.graphics.rectangle("line", r.x*SCALE, displayCoord(r.y)*SCALE, r.w*SCALE, -r.h*SCALE)
+        love.graphics.rectangle("line", r.x*SCALE_X, displayCoord(r.y)*SCALE_Y, r.w*SCALE_X, -r.h*SCALE_Y)
         local f = sprites.getFeet(spriteName)
         love.graphics.setColor(255, 0, 255)
-        love.graphics.rectangle("line", f.x*SCALE, displayCoord(f.y)*SCALE, f.w*SCALE, -f.h*SCALE)
+        love.graphics.rectangle("line", f.x*SCALE_X, displayCoord(f.y)*SCALE_Y, f.w*SCALE_X, -f.h*SCALE_Y)
         local h = sprites.getRect(Hands[spriteName], true)
         if h then
           love.graphics.setColor(0, 255, 255)
-          love.graphics.rectangle("line", h.x*SCALE, displayCoord(h.y)*SCALE, h.w*SCALE, -h.h*SCALE)
+          love.graphics.rectangle("line", h.x*SCALE_X, displayCoord(h.y)*SCALE_Y, h.w*SCALE_X, -h.h*SCALE_Y)
         end
       end
     end
@@ -492,12 +492,8 @@ function playing.draw()
     yOff = yOff + LINE_HEIGHT
     love.graphics.print(tag..": "..tostring(score), CONSOLE_MARGIN, yOff)
   end
-  love.graphics.setCanvas()
-  love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE, SCALE)
 
   -- debug things
-  console.draw()
   if ShowFPS then
     local fpsText = "FPS: "..tostring(love.timer.getFPS( ))
     love.graphics.setFont(CONSOLE_FONT)

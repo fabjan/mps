@@ -5,6 +5,7 @@ local lume = require "lume"
 local reloader = require "hot_reloading"
 
 -- local libs
+local console = require "console"
 local keyboard = require "keyboard"
 local sprites = require "sprites"
 local sounds = require "sounds"
@@ -88,5 +89,6 @@ function drawScene()
   end
   love.graphics.setCanvas()
   love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE, SCALE)
+  love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE_X, SCALE_Y)
+  console.draw()
 end
