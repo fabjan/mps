@@ -488,7 +488,7 @@ function playing.draw()
     local playerName = nameAndScore[1]
     local score = nameAndScore[2]
     local tag = Tag[playerName]
-    if lume.find(Dead, playerName) then tag = " "..tag else tag = " "..tag end
+    if lume.find(Dead, playerName) then tag = "X"..tag else tag = " "..tag end
     love.graphics.setColor(Color[playerName])
     yOff = yOff + LINE_HEIGHT
     love.graphics.print(tag..": "..tostring(score), CONSOLE_MARGIN, yOff)
