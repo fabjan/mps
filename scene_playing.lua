@@ -68,7 +68,7 @@ function playing.init()
   NextLine = 0
 
   -- setup monkey business
-  MonkeyLives = true  -- Number 5 is alive!
+  MonkeyLives = false  -- Number 5 is alive!
 
   if MonkeyLives then
     robot.init()
