@@ -371,8 +371,7 @@ function actOnInput(spriteName, inputState)
   if attackName then
     sprites.mutate(spriteName, {animationState = "attack"})
     sprites.mutate(Hands[spriteName], {visible = true, animationState = attackName})
-  end
-  if (not attacking) and (inputState.rock == "released" or inputState.paper == "released" or inputState.scissors == "released") then
+  elseif (inputState.rock == "released" or inputState.paper == "released" or inputState.scissors == "released") then
     sprites.mutate(spriteName, {animationState = "idle"})
     sprites.mutate(Hands[spriteName], {visible = false})
   end
