@@ -5,6 +5,7 @@ local lume = require "lume"
 local reloader = require "hot_reloading"
 
 -- local libs
+local keyboard = require "keyboard"
 local sprites = require "sprites"
 local sounds = require "sounds"
 
@@ -29,6 +30,7 @@ function love.load()
   reloader.enable()
   sprites.load()
   sounds.load()
+  keyboard.load()
   
   LowrezCanvas = love.graphics.newCanvas()
   LowrezCanvas:setFilter("nearest", "nearest")
@@ -48,6 +50,11 @@ function love.keypressed(key)
   elseif key == "escape" then
     selectScene("menu")
   end
+  keyboard.keypressed(key)
+end
+
+function love.keyreleased(key)
+  keyboard.keyreleased(key)
 end
 
 function selectScene(newName)
