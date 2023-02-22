@@ -6,6 +6,15 @@ MPS is a massively multiplayer rock paper scissors action game.
 
 [LÖVE](https://love2d.org) (tested with v11.3)
 
+## Building and running
+
+```shell
+$ make
+$ open mps.love
+```
+
+`make` will create a zip file called `mps.love`, meant to be played using LÖVE.
+
 ## Controls
 
 Player one uses the keyboard
@@ -29,9 +38,25 @@ you kill the other player, otherwise the attacker kills you.
 
 Last player standing wins.
 
-## Tools used
-- deflemask
-- sunvox
-- jpixel
-- sfxr
-- tiled
+## Cool stuff that enabled me to make this game
+
+This is from memory, it was seven years ago:
+
+- deflemask: I maybe made one track in this
+- sunvox: I made the music in this I think
+- jpixel: for drawing the sprites
+
+Libraries (you can see them in the `src` directory):
+
+- anim8.lua
+- bit.lua
+- lume.lua
+- lurker.lua
+- sfxr.lua
+
+## Copyright
+
+This game is licensed under the MIT license, (see LICENSE for details).
+
+song_0.mp3 is a cover I made of the "Janken" theme from Alex Kidd in Miracle World.  
+song_1.mp3 is an adapted version of the same song.
