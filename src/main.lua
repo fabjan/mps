@@ -1,10 +1,10 @@
 require "globals"
 
 -- some libs
-local lume = require "lume"
-local reloader = require "hot_reloading"
+local lume = require "vendor/lume"
 
 -- local libs
+local reloader = require "hot_reloading"
 local console = require "console"
 local keyboard = require "keyboard"
 local sprites = require "sprites"

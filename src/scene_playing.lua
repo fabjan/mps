@@ -1,4 +1,4 @@
-local lume = require "lume"
+local lume = require "vendor/lume"
 
 local console     = require "console"
 local controllers = require "controllers"

@@ -1,6 +1,6 @@
 require "globals"
 
-local lume = require "lume"
+local lume = require "vendor/lume"
 
 local ConsoleBuffer = {}
 local ShowConsole = false

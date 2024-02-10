@@ -1,5 +1,5 @@
-local anim8 = require "anim8"
-local lume = require "lume"
+local anim8 = require "vendor/anim8"
+local lume = require "vendor/lume"
 
 local console = require "console"
 

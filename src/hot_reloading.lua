@@ -1,4 +1,4 @@
-lurker = require "lurker"
+lurker = require "vendor/lurker"
 
 LastLurk = 0
 LurkingEnabled = false

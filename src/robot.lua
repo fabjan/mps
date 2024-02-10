@@ -1,4 +1,4 @@
-local lume = require "lume"
+local lume = require "vendor/lume"
 
 RobotChangeDelay = 0.2  -- seconds
 
