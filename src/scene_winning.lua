@@ -1,6 +1,6 @@
 local sounds = require "sounds"
 
-WINNING_FONT           = BIG_FONT 
+WINNING_FONT           = BIG_FONT
 WINNING_TEXT_Y         = PIXEL_HEIGHT*0.1
 WINNING_TEXT_XCENTER   = PIXEL_WIDTH/2
 WINNING_TEXT_MAX_XDIFF = 10

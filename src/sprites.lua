@@ -42,13 +42,13 @@ function sprites.load()
     for stateName, frameInfo in pairs(animStates) do
       local stateKey = animName.."_"..stateName
       local img = love.graphics.newImage(stateKey..".png")
-	    local grid = anim8.newGrid(frameInfo.gridSize,frameInfo.gridSize, img:getWidth(),img:getHeight(), 0,0)
+      local grid = anim8.newGrid(frameInfo.gridSize,frameInfo.gridSize, img:getWidth(),img:getHeight(), 0,0)
       SpriteSheets[animName.."_"..stateName] = img
-	    Animations[animName][stateName] = anim8.newAnimation(grid(frameInfo.cols, frameInfo.rows), frameInfo.delay)
+      Animations[animName][stateName] = anim8.newAnimation(grid(frameInfo.cols, frameInfo.rows), frameInfo.delay)
     end
   end
-  
-	Prototypes.player = {
+
+  Prototypes.player = {
     x              = PIXEL_WIDTH/2,
     y              = PIXEL_HEIGHT-SPRITE_SIZE,
     dx             = 0,
@@ -63,8 +63,8 @@ function sprites.load()
     flipX          = false,
     visible        = true
   }
-  
-	Prototypes.attack = {
+
+  Prototypes.attack = {
     x              = 0,
     y              = 0,
     dx             = 0,
@@ -84,13 +84,13 @@ end
 
 function sprites.get(spriteName, keys)
   local sprite = Sprites[spriteName]
-  
+
   if lume.isarray(keys) then
     if not sprite then
       console.log("sprite "..spriteName.. " cannot be gotten")
       return {}
     end
-    
+
     local result = {}
     for i, key in ipairs(keys) do
       result[key] = sprite[key]
@@ -101,7 +101,7 @@ function sprites.get(spriteName, keys)
       console.log("sprite "..spriteName.. " cannot be gotten")
       return nil
     end
-  
+
     return sprite[keys]
   end
 end
@@ -110,7 +110,7 @@ function sprites.getRect(spriteName, onlyIfVisible)
   local sprite = Sprites[spriteName]
   if not sprite then return nil end
   if onlyIfVisible and not sprite.visible then return nil end
-  
+
   return {
     x = sprite.x,
     y = sprite.y,
@@ -122,7 +122,7 @@ end
 function sprites.getFeet(spriteName)
   local sprite = Sprites[spriteName]
   if not sprite then return nil end
-  
+
   return {
     x = sprite.x,
     y = sprite.y,
@@ -139,7 +139,7 @@ function sprites.enumerate(spriteName)
     console.log("sprite "..spriteName.. " cannot be gotten")
     return result
   end
-    
+
   for key, value in pairs(sprite) do
     result[key] = value
   end

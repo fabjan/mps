@@ -26,16 +26,16 @@ function love.load()
   math.randomseed(os.time())
   love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
   love.graphics.setFont(CONSOLE_FONT)
-    
+
   -- setup modules
   reloader.enable()
   sprites.load()
   sounds.load()
   keyboard.load()
-  
+
   LowrezCanvas = love.graphics.newCanvas()
   LowrezCanvas:setFilter("nearest", "nearest")
-  
+
   selectScene("menu")
 end
 
@@ -63,11 +63,11 @@ function selectScene(newName)
   if lastScene and lastScene.leave then lastScene.leave() end
   local newScene = Scenes[newName]
   CurScene = newName
-  
+
   if not (newScene.init == nil) then
     newScene.init()
   end
-  
+
   love.update = updateScene
   love.draw   = drawScene
 end

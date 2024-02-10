@@ -64,7 +64,7 @@ function playing.init()
   Tag     = {}
   Color   = {}
   Winner  = "NOBODY"
-  
+
   NextLine = 0
 
   -- setup monkey business
@@ -74,7 +74,7 @@ function playing.init()
     robot.init()
     spawnPlayer(-1, "robot", "robotHand")
   end
-  
+
   sounds.play("song1", true)
 end
 
@@ -84,7 +84,7 @@ end
 
 function playing.update(dt)
   controllers.update(dt)
-  
+
   for playerNo, gamepad in controllers.enumerate() do
     local inputState = controllers.inputState(playerNo)
     local playerName = "player"..playerNo
@@ -95,18 +95,18 @@ function playing.update(dt)
       actOnInput(playerName, inputState)
     end
   end
-  
+
   if MonkeyLives then  -- debugging buddy
     local robotInput = robot.update(dt)
     actOnInput("robot", robotInput)
   end
-  
+
   for i, spriteName in ipairs(Falling) do
     local hang = 1
     if lume.find(Hanging, spriteName) then hang = JUMP_HANG end
     sprites.mutate(spriteName, {ddy = LIKE_GRAVITY/hang})
   end
-  
+
   sprites.update(dt)
   resolvePlatforming()
   clampToScreen()
@@ -114,7 +114,7 @@ function playing.update(dt)
   resolvePlayerCollisions()
   resolveFights(dt)
   killAllDeadPlayers()
-  
+
   if table.getn(Players) == 1 and table.getn(Dead) > 0 then
     Winner = Tag[Players[1]]
     return "winning"
@@ -125,7 +125,7 @@ function spawnPlayer(playerNo, playerName, handName, playerTag)
   sprites.create(playerName, "player")
   sprites.create(handName, "attack")
   playerTag = playerTag or randomName()
-  
+
   local playerColor = stringColor(playerTag)
   local playerX = lume.random(0, PIXEL_WIDTH)
   sprites.mutate(playerName, {x = playerX, color = playerColor, tag = playerTag})
@@ -333,7 +333,7 @@ function actOnInput(spriteName, inputState)
   if inputState.jump == "released" and isFalling then
     lume.remove(Hanging, spriteName)
   end
-  
+
   -- moving
   if inputState.left == "pressed" then
     sprites.mutate(spriteName, {dx = -RUNNING_START, flipX = true})
@@ -356,14 +356,14 @@ function actOnInput(spriteName, inputState)
       sprites.mutate(spriteName, {ddx = spriteInfo.ddx*dragFactor,  dx = spriteInfo.dx*dragFactor})
     end
   end
-  
+
   local newSpriteInfo = sprites.get(spriteName, {"dx", "ddx", "dy"})
   if newSpriteInfo.dx < -RUNNING_MAX then
     sprites.mutate(spriteName, {ddx = 0,  dx = -RUNNING_MAX})
   elseif newSpriteInfo.dx > RUNNING_MAX then
     sprites.mutate(spriteName, {ddx = 0,  dx = RUNNING_MAX})
   end
-  
+
   -- attacking
   local attackName
   if inputState.rock == "pressed" then
@@ -425,7 +425,7 @@ function playing.draw()
     love.graphics.setColor(255, 255, 255)
     local xOffset
     local consoleBottom = LINE_HEIGHT * CONSOLE_LINES
-    
+
     if ShowDebugInfo and MonkeyLives then
       love.graphics.setColor(255, 255, 255)
       NextLine = LINE_HEIGHT * CONSOLE_LINES
@@ -471,9 +471,9 @@ function playing.draw()
     end
     love.graphics.setCanvas(oldCanvas)
   end
-  
+
   love.graphics.clear()
-  
+
   for i, p in ipairs(Platforms) do
     love.graphics.setColor(0xAA, 0xAA, 0xAA)
     love.graphics.rectangle("fill", p.x, displayCoord(p.y), p.w, 2)
@@ -510,16 +510,16 @@ function playing.draw()
 end
 
 function printLine(s, x, startAt)
-	if (startAt ~= nil) then
-		NextLine = startAt
-	end
-	if (NextLine == nil) then
-		NextLine = 0
-	else
-		NextLine = NextLine + LINE_HEIGHT
-	end
+  if (startAt ~= nil) then
+    NextLine = startAt
+  end
+  if (NextLine == nil) then
+    NextLine = 0
+  else
+    NextLine = NextLine + LINE_HEIGHT
+  end
 
-	love.graphics.print(s, x, NextLine)
+  love.graphics.print(s, x, NextLine)
 end
 
 return playing

@@ -15,7 +15,7 @@ function robot.update(dt)
     RobotChangeTimer = 0
     robotDoSomething()
   end
-  return RobotInputMap  
+  return RobotInputMap
 end
 
 function robotDoSomething()
