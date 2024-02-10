@@ -28,7 +28,7 @@ function winning.draw()
   love.graphics.setColor(1, 1, 1)
   love.graphics.draw(WinScreen)
   love.graphics.setColor(0, 0, 0)
-  love.graphics.rectangle("fill", WinningTextX-2, WINNING_TEXT_Y-5, WinningTextWidth+2, WinningTextHeight+2)
+  love.graphics.rectangle("fill", WinningTextX-2, WINNING_TEXT_Y-5, WinningTextWidth+2, WinningTextHeight+8)
   love.graphics.setColor(stringColor(Winner))
   love.graphics.print(WinningText, WinningTextX, WINNING_TEXT_Y)
 end

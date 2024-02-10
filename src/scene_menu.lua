@@ -32,7 +32,7 @@ function menu.draw()
   love.graphics.setColor(1, 1, 1)
   love.graphics.draw(SplashScreen)
   love.graphics.setColor(0, 0, 0)
-  love.graphics.rectangle("fill", MENU_TEXT_X-2, MenuTextY-5, MENU_TEXT_W+2, MENU_TEXT_H+2)
+  love.graphics.rectangle("fill", MENU_TEXT_X-2, MenuTextY-5, MENU_TEXT_W+2, MENU_TEXT_H+8)
   love.graphics.setColor(1, 1, 1)
   love.graphics.print(MENU_TEXT, MENU_TEXT_X, MenuTextY)
 end
