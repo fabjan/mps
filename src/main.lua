@@ -88,7 +88,7 @@ function drawScene()
     Scenes[CurScene].draw()
   end
   love.graphics.setCanvas()
-  love.graphics.setColor(255, 255, 255)
+  love.graphics.setColor(1, 1, 1)
   love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE_X, SCALE_Y)
   console.draw()
 end

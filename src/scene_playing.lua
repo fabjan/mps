@@ -422,12 +422,12 @@ function playing.draw()
     love.graphics.setCanvas()
     love.graphics.setFont(CONSOLE_FONT)
     love.graphics.clear()
-    love.graphics.setColor(255, 255, 255)
+    love.graphics.setColor(1, 1, 1)
     local xOffset
     local consoleBottom = LINE_HEIGHT * CONSOLE_LINES
 
     if ShowDebugInfo and MonkeyLives then
-      love.graphics.setColor(255, 255, 255)
+      love.graphics.setColor(1, 1, 1)
       NextLine = LINE_HEIGHT * CONSOLE_LINES
       xOffset = 550
       printLine("robot", xOffset)
@@ -438,7 +438,7 @@ function playing.draw()
     for player, gamepad in controllers.enumerate() do
       local spriteName = "player"..player
       if ShowDebugInfo then
-        love.graphics.setColor(255, 255, 255)
+        love.graphics.setColor(1, 1, 1)
         NextLine = consoleBottom
         xOffset = CONSOLE_MARGIN + (player - 1) * 200
         printLine("player " .. tostring(player), xOffset)
@@ -457,14 +457,14 @@ function playing.draw()
       end
       if ShowBoundingBoxes then
         local r = sprites.getRect(spriteName)
-        love.graphics.setColor(0, 255, 0)
+        love.graphics.setColor(0, 1, 0)
         love.graphics.rectangle("line", r.x*SCALE_X, displayCoord(r.y)*SCALE_Y, r.w*SCALE_X, -r.h*SCALE_Y)
         local f = sprites.getFeet(spriteName)
-        love.graphics.setColor(255, 0, 255)
+        love.graphics.setColor(1, 0, 1)
         love.graphics.rectangle("line", f.x*SCALE_X, displayCoord(f.y)*SCALE_Y, f.w*SCALE_X, -f.h*SCALE_Y)
         local h = sprites.getRect(Hands[spriteName], true)
         if h then
-          love.graphics.setColor(0, 255, 255)
+          love.graphics.setColor(0, 1, 1)
           love.graphics.rectangle("line", h.x*SCALE_X, displayCoord(h.y)*SCALE_Y, h.w*SCALE_X, -h.h*SCALE_Y)
         end
       end
@@ -475,7 +475,7 @@ function playing.draw()
   love.graphics.clear()
 
   for i, p in ipairs(Platforms) do
-    love.graphics.setColor(0xAA, 0xAA, 0xAA)
+    love.graphics.setColor(0.67, 0.67, 0.67)
     love.graphics.rectangle("fill", p.x, displayCoord(p.y), p.w, 2)
   end
   sprites.draw()
@@ -486,9 +486,9 @@ function playing.draw()
     lume.push(scores, {name, score})
   end
   local yOff = LINE_HEIGHT
-  love.graphics.setColor(0x55, 0x55, 0x55)
+  love.graphics.setColor(0.33, 0.33, 0.33)
   love.graphics.rectangle("fill", 0, 0, UIMargin, PIXEL_HEIGHT)
-  love.graphics.setColor(255, 255, 255)
+  love.graphics.setColor(1, 1, 1)
   love.graphics.print("HIGH SCORE", CONSOLE_MARGIN, yOff)
   for i, nameAndScore in ipairs(lume.sort(scores, function(a, b) return a[2] > b[2] end)) do
     local playerName = nameAndScore[1]
@@ -504,7 +504,7 @@ function playing.draw()
   if ShowFPS then
     local fpsText = "FPS: "..tostring(love.timer.getFPS( ))
     love.graphics.setFont(CONSOLE_FONT)
-    love.graphics.setColor(255, 255, 255)
+    love.graphics.setColor(1, 1, 1)
     love.graphics.print(fpsText, WINDOW_WIDTH - CONSOLE_FONT:getWidth(fpsText), LINE_HEIGHT)
   end
 end

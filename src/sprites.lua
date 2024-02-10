@@ -57,7 +57,7 @@ function sprites.load()
     ddy            = 0,
     width          = SPRITE_SIZE*0.4, height = SPRITE_SIZE,
     xMargin        = SPRITE_SIZE*0.3,
-    color          = {255, 255, 255},
+    color          = {1, 1, 1},
     animations     = "gubbe",
     animationState = "idle",
     flipX          = false,
@@ -73,7 +73,7 @@ function sprites.load()
     ddy            = 0,
     width          = ATTACK_SIZE, height = ATTACK_SIZE,
     xMargin        = 0,
-    color          = {255, 255, 255},
+    color          = {1, 1, 1},
     animations     = "attack",
     animationState = "rock",
     flipX          = false,
@@ -171,7 +171,7 @@ function sprites.draw()
       if sprite.color then
         love.graphics.setColor(sprite.color)
       else
-        love.graphics.setColor(255, 255, 255)
+        love.graphics.setColor(1, 1, 1)
       end
       local animation = Animations[sprite.animations][sprite.animationState]
       local displayY = displayCoord(lume.round(sprite.y))-sprite.height
