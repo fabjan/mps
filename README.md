@@ -49,6 +49,17 @@ Other players can join in by just plugging in a USB controller. In terms of an x
 - Y: paper
 - B: scissors
 
+Keyboard shortcuts for debugging
+- D: show debugging spam
+- B: show bounding boxes
+- F: show FPS counter
+- Tab: show console
+
+### Troubleshooting
+
+Q: My screen is full of crap  
+A: See debugging controls above, maybe you toggled something by mistake.
+
 ## Cool stuff that enabled me to make this game
 
 This is from memory, it was seven years ago:
