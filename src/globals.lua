@@ -33,40 +33,42 @@ GROUND_DRAG     = 0.8
 ATTACK_DURATION = 0.1
 LIVES           = 5
 
-COLOR_PALETTE = {     -- standard CGA colors
-  {0x00, 0x00, 0x00},
-  {0x55, 0x55, 0x55},
-  {0x00, 0x00, 0xAA},
-  {0x55, 0x55, 0xFF},
-  {0x00, 0xAA, 0x00},
-  {0x55, 0xFF, 0x55},
-  {0x00, 0xAA, 0xAA},
-  {0x55, 0xFF, 0xFF},
-  {0xAA, 0x00, 0x00},
-  {0xFF, 0x55, 0x55},
-  {0xAA, 0x00, 0xAA},
-  {0xFF, 0x55, 0xFF},
-  {0xAA, 0x55, 0x00}, -- tweaked brown
-  {0xFF, 0xFF, 0x55},
-  {0xAA, 0xAA, 0xAA},
-  {0xFF, 0xFF, 0xFF}
+-- standard CGA colors
+COLOR_PALETTE = {
+  {0x00/255, 0x00/255, 0x00/255},
+  {0x55/255, 0x55/255, 0x55/255},
+  {0x00/255, 0x00/255, 0xAA/255},
+  {0x55/255, 0x55/255, 0xFF/255},
+  {0x00/255, 0xAA/255, 0x00/255},
+  {0x55/255, 0xFF/255, 0x55/255},
+  {0x00/255, 0xAA/255, 0xAA/255},
+  {0x55/255, 0xFF/255, 0xFF/255},
+  {0xAA/255, 0x00/255, 0x00/255},
+  {0xFF/255, 0x55/255, 0x55/255},
+  {0xAA/255, 0x00/255, 0xAA/255},
+  {0xFF/255, 0x55/255, 0xFF/255},
+  {0xAA/255, 0x55/255, 0x00/255}, -- tweaked brown
+  {0xFF/255, 0xFF/255, 0x55/255},
+  {0xAA/255, 0xAA/255, 0xAA/255},
+  {0xFF/255, 0xFF/255, 0xFF/255}
 }
 
 function displayCoord(y)
   return PIXEL_HEIGHT - y
 end
 
+-- djb2 hash from http://www.cse.yorku.ca/~oz/hash.html
 function stringHash(s)
-  local base = string.byte("A")
-  local hash  = 0
-  local radix = 1
-  for i = 1, s:len(), 1 do
-    hash = hash + (base - s:byte(i)) * radix
-    radix = radix * 10
+  local hash = 5381
+  for i = 1, #s do
+    hash = (hash * 33) + string.byte(s, i)
   end
   return hash
 end
 
 function stringColor(s)
-  return COLOR_PALETTE[stringHash(s) % (#COLOR_PALETTE) + 1 + 1] -- avoid black, as it's the background color
+  -- arrays are 1-indexed in Lua
+  -- add one to avoid black, being the background color
+  -- module length minus one to account for the extra one
+  return COLOR_PALETTE[1 + 1 + stringHash(s) % (#COLOR_PALETTE - 1)]
 end

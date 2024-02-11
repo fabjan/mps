@@ -1,4 +1,4 @@
-local sfxr = require "sfxr"
+local sfxr = require "vendor/sfxr"
 
 local console = require "console"
 

@@ -1,4 +1,4 @@
-local lume = require "lume"
+local lume = require "vendor/lume"
 
 RobotChangeDelay = 0.2  -- seconds
 
@@ -15,7 +15,7 @@ function robot.update(dt)
     RobotChangeTimer = 0
     robotDoSomething()
   end
-  return RobotInputMap  
+  return RobotInputMap
 end
 
 function robotDoSomething()

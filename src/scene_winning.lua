@@ -1,6 +1,6 @@
 local sounds = require "sounds"
 
-WINNING_FONT           = BIG_FONT 
+WINNING_FONT           = BIG_FONT
 WINNING_TEXT_Y         = PIXEL_HEIGHT*0.1
 WINNING_TEXT_XCENTER   = PIXEL_WIDTH/2
 WINNING_TEXT_MAX_XDIFF = 10
@@ -25,10 +25,10 @@ end
 function winning.draw()
   love.graphics.setFont(WINNING_FONT)
   love.graphics.clear()
-  love.graphics.setColor(0xFF, 0xFF, 0xFF)
+  love.graphics.setColor(1, 1, 1)
   love.graphics.draw(WinScreen)
-  love.graphics.setColor(0x00, 0x00, 0x00)
-  love.graphics.rectangle("fill", WinningTextX-2, WINNING_TEXT_Y-5, WinningTextWidth+2, WinningTextHeight+2)
+  love.graphics.setColor(0, 0, 0)
+  love.graphics.rectangle("fill", WinningTextX-2, WINNING_TEXT_Y-5, WinningTextWidth+2, WinningTextHeight+8)
   love.graphics.setColor(stringColor(Winner))
   love.graphics.print(WinningText, WinningTextX, WINNING_TEXT_Y)
 end

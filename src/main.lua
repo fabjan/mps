@@ -1,10 +1,10 @@
 require "globals"
 
 -- some libs
-local lume = require "lume"
-local reloader = require "hot_reloading"
+local lume = require "vendor/lume"
 
 -- local libs
+local reloader = require "hot_reloading"
 local console = require "console"
 local keyboard = require "keyboard"
 local sprites = require "sprites"
@@ -26,16 +26,16 @@ function love.load()
   math.randomseed(os.time())
   love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
   love.graphics.setFont(CONSOLE_FONT)
-    
+
   -- setup modules
   reloader.enable()
   sprites.load()
   sounds.load()
   keyboard.load()
-  
+
   LowrezCanvas = love.graphics.newCanvas()
   LowrezCanvas:setFilter("nearest", "nearest")
-  
+
   selectScene("menu")
 end
 
@@ -63,11 +63,11 @@ function selectScene(newName)
   if lastScene and lastScene.leave then lastScene.leave() end
   local newScene = Scenes[newName]
   CurScene = newName
-  
+
   if not (newScene.init == nil) then
     newScene.init()
   end
-  
+
   love.update = updateScene
   love.draw   = drawScene
 end
@@ -88,7 +88,7 @@ function drawScene()
     Scenes[CurScene].draw()
   end
   love.graphics.setCanvas()
-  love.graphics.setColor(255, 255, 255)
+  love.graphics.setColor(1, 1, 1)
   love.graphics.draw(LowrezCanvas, 0, 0, 0, SCALE_X, SCALE_Y)
   console.draw()
 end
