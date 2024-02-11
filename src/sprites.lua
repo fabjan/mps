@@ -169,7 +169,8 @@ function sprites.draw()
   for name, sprite in pairs(Sprites) do
     if sprite.visible then
       if sprite.color then
-        love.graphics.setColor(sprite.color)
+        r, g, b = unpack(sprite.color)
+        love.graphics.setColor(r, g, b)
       else
         love.graphics.setColor(1, 1, 1)
       end
