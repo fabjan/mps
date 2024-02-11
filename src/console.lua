@@ -34,7 +34,7 @@ function console.draw()
   local lines = #ConsoleBuffer
   local width = love.graphics.getWidth() - CONSOLE_MARGIN*2
 
-  love.graphics.setColor(20, 20, 20, 200)
+  love.graphics.setColor(0.08, 0.08, 0.08, 0.8)
   love.graphics.rectangle("fill",  CONSOLE_MARGIN, 0, width, lines*LINE_HEIGHT*2 + CONSOLE_MARGIN*2)
   love.graphics.setColor(1, 1, 1, 200)
   love.graphics.setFont(CONSOLE_FONT)

@@ -65,9 +65,12 @@ function playing.init()
   Color   = {}
   Winner  = "NOBODY"
 
+  -- shared mutable state for debug text printlines
   NextLine = 0
 
   -- setup monkey business
+  -- make this true to test with a dummy
+  -- if you have no extra controllers
   MonkeyLives = false  -- Number 5 is alive!
 
   if MonkeyLives then
@@ -417,78 +420,41 @@ function randomName(tries)
 end
 
 function playing.draw()
+  -- debug "underlay"
   if ShowDebugInfo or ShowBoundingBoxes then
-    local oldCanvas = love.graphics.getCanvas()
-    love.graphics.setCanvas()
-    love.graphics.setFont(CONSOLE_FONT)
-    love.graphics.clear()
-    love.graphics.setColor(1, 1, 1)
-    local xOffset
-    local consoleBottom = LINE_HEIGHT * CONSOLE_LINES
-
-    if ShowDebugInfo and MonkeyLives then
-      love.graphics.setColor(1, 1, 1)
-      NextLine = LINE_HEIGHT * CONSOLE_LINES
-      xOffset = 550
-      printLine("robot", xOffset)
-      for k, v in pairs(sprites.enumerate("robot")) do
-        printLine(k .. ": " .. tostring(v), xOffset + CONSOLE_MARGIN*2)
-      end
-    end
-    for player, gamepad in controllers.enumerate() do
-      local spriteName = "player"..player
-      if ShowDebugInfo then
-        love.graphics.setColor(1, 1, 1)
-        NextLine = consoleBottom
-        xOffset = CONSOLE_MARGIN + (player - 1) * 200
-        printLine("player " .. tostring(player), xOffset)
-        xOffset = xOffset + CONSOLE_MARGIN*2
-        if (gamepad:isConnected()) then
-          for k, v in pairs(controllers.inputState(player)) do
-            printLine(k .. ": " .. tostring(v), xOffset)
-          end
-        else
-          printLine("controller not connected", xOffset)
-        end
-        local spriteName = "player"..player
-        for k, v in pairs(sprites.enumerate(spriteName)) do
-        printLine(k .. ": " .. tostring(v), xOffset)
-        end
-      end
-      if ShowBoundingBoxes then
-        local r = sprites.getRect(spriteName)
-        love.graphics.setColor(0, 1, 0)
-        love.graphics.rectangle("line", r.x*SCALE_X, displayCoord(r.y)*SCALE_Y, r.w*SCALE_X, -r.h*SCALE_Y)
-        local f = sprites.getFeet(spriteName)
-        love.graphics.setColor(1, 0, 1)
-        love.graphics.rectangle("line", f.x*SCALE_X, displayCoord(f.y)*SCALE_Y, f.w*SCALE_X, -f.h*SCALE_Y)
-        local h = sprites.getRect(Hands[spriteName], true)
-        if h then
-          love.graphics.setColor(0, 1, 1)
-          love.graphics.rectangle("line", h.x*SCALE_X, displayCoord(h.y)*SCALE_Y, h.w*SCALE_X, -h.h*SCALE_Y)
-        end
-      end
-    end
-    love.graphics.setCanvas(oldCanvas)
+    drawDebugCrap()
   end
 
   love.graphics.clear()
 
+  -- game graphics
   for i, p in ipairs(Platforms) do
     love.graphics.setColor(0.67, 0.67, 0.67)
     love.graphics.rectangle("fill", p.x, displayCoord(p.y), p.w, 2)
   end
   sprites.draw()
 
+  -- UI
+  drawSidebar()
+
+  -- debug overlay
+  if ShowFPS then
+    local fpsText = "FPS: "..tostring(love.timer.getFPS())
+    local xOff = PIXEL_WIDTH - CONSOLE_MARGIN - SMALL_FONT:getWidth(fpsText)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print(fpsText, xOff, LINE_HEIGHT)
+  end
+end
+
+function drawSidebar()
   -- What are the scores George Dawes?
   local scores = {}
   for name, score in pairs(Score) do
     lume.push(scores, {name, score})
   end
   local yOff = LINE_HEIGHT
-  love.graphics.setColor(0.33, 0.33, 0.33)
-  love.graphics.rectangle("fill", 0, 0, UIMargin, PIXEL_HEIGHT)
   love.graphics.setColor(1, 1, 1)
+  love.graphics.rectangle("line", SCALE_X/2, SCALE_Y/2, UIMargin-SCALE_X, PIXEL_HEIGHT-SCALE_Y*3)
   love.graphics.print("HIGH SCORE", CONSOLE_MARGIN, yOff)
   for i, nameAndScore in ipairs(lume.sort(scores, function(a, b) return a[2] > b[2] end)) do
     local playerName = nameAndScore[1]
@@ -499,26 +465,86 @@ function playing.draw()
     yOff = yOff + LINE_HEIGHT
     love.graphics.print(tag..": "..tostring(score), CONSOLE_MARGIN, yOff)
   end
+end
 
-  -- debug things
-  if ShowFPS then
-    local fpsText = "FPS: "..tostring(love.timer.getFPS( ))
-    love.graphics.setFont(CONSOLE_FONT)
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.print(fpsText, WINDOW_WIDTH - CONSOLE_FONT:getWidth(fpsText), LINE_HEIGHT)
+function drawMonkeyDebug()
+  love.graphics.setColor(1, 1, 1)
+  xOffset = WINDOW_WIDTH - 400
+  resetPrintLine(LINE_HEIGHT * CONSOLE_LINES + 300)
+  printLine("robot", xOffset)
+  for k, v in pairs(sprites.enumerate("robot")) do
+    printLine(k .. ": " .. tostring(v), xOffset)
   end
 end
 
-function printLine(s, x, startAt)
-  if (startAt ~= nil) then
-    NextLine = startAt
-  end
-  if (NextLine == nil) then
-    NextLine = 0
+function drawPlayerDebug(player, gamepad, xOffset)
+  love.graphics.setColor(1, 1, 1)
+  resetPrintLine(consoleBottom)
+  printLine("player " .. tostring(player), xOffset)
+  if (gamepad:isConnected()) then
+    for k, v in pairs(controllers.inputState(player)) do
+      printLine(k .. ": " .. tostring(v), xOffset)
+    end
   else
-    NextLine = NextLine + LINE_HEIGHT
+    printLine("controller not connected", xOffset)
+  end
+  for k, v in pairs(sprites.enumerate("player"..player)) do
+    printLine(k .. ":", xOffset)
+    if k == "color" then
+      r, g, b = unpack(v)
+      printLine(string.format("  %.2f %.2f %.2f", r, g, b), xOffset)
+    else
+      printLine("  " .. tostring(v), xOffset)
+    end
+  end
+end
+
+function drawBoundingBox(spriteName)
+  local r = sprites.getRect(spriteName)
+  love.graphics.setColor(0, 1, 0)
+  love.graphics.rectangle("line", r.x*SCALE_X, displayCoord(r.y)*SCALE_Y, r.w*SCALE_X, -r.h*SCALE_Y)
+  local f = sprites.getFeet(spriteName)
+  love.graphics.setColor(1, 0, 1)
+  love.graphics.rectangle("line", f.x*SCALE_X, displayCoord(f.y)*SCALE_Y, f.w*SCALE_X, -f.h*SCALE_Y)
+  local h = sprites.getRect(Hands[spriteName], true)
+  if h then
+    love.graphics.setColor(0, 1, 1)
+    love.graphics.rectangle("line", h.x*SCALE_X, displayCoord(h.y)*SCALE_Y, h.w*SCALE_X, -h.h*SCALE_Y)
+  end
+end
+
+function drawDebugCrap()
+  local oldCanvas = love.graphics.getCanvas()
+  love.graphics.setCanvas()
+  love.graphics.setFont(CONSOLE_FONT)
+  love.graphics.clear()
+  love.graphics.setColor(1, 1, 1)
+  local xOffset
+  local consoleBottom = LINE_HEIGHT * CONSOLE_LINES
+
+  if ShowDebugInfo and MonkeyLives then
+    drawMonkeyDebug()
   end
 
+  for player, gamepad in controllers.enumerate() do
+    local spriteName = "player"..player
+    if ShowDebugInfo then
+      xOffset = CONSOLE_MARGIN + (player - 1) * 200 + UIMargin * SCALE_X
+      drawPlayerDebug(player, gamepad, xOffset)
+    end
+    if ShowBoundingBoxes then
+      drawBoundingBox(spriteName)
+    end
+  end
+  love.graphics.setCanvas(oldCanvas)
+end
+
+function resetPrintLine(startAt)
+  NextLine = startAt or 0
+end
+
+function printLine(s, x)
+  NextLine = NextLine + LINE_HEIGHT * 1.5
   love.graphics.print(s, x, NextLine)
 end
 
