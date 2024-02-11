@@ -57,13 +57,11 @@ function displayCoord(y)
   return PIXEL_HEIGHT - y
 end
 
+-- djb2 hash from http://www.cse.yorku.ca/~oz/hash.html
 function stringHash(s)
-  local base = string.byte("A")
-  local hash  = 0
-  local radix = 1
-  for i = 1, s:len(), 1 do
-    hash = hash + (base - s:byte(i)) * radix
-    radix = radix * 10
+  local hash = 5381
+  for i = 1, #s do
+    hash = (hash * 33) + string.byte(s, i)
   end
   return hash
 end
